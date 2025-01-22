@@ -1,11 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { resolve } from "path";
+import sampleData from "@/db/sample-data";
+import ProductList from "@/components/shared/product/product-list";
 
 const Homepage = () => {
 
   return ( <>
-    <h1>Homepage</h1>
-  </> );
+    <ProductList 
+      data={sampleData.products} 
+      title={'Newest Arrivals'}
+      limit={4}>
+  </ProductList> 
+  </>
+  );
 }
  
 export default Homepage;

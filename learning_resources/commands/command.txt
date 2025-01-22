@@ -25,7 +25,7 @@ git branch -M master
 git push -u origin master
 
 
-
+Session 1
 Run the Project -> npm run dev
 -->sfc for Generating Default .tsx values /rafce for .jsx values
 --> Default Project Setup
@@ -66,3 +66,28 @@ npm i next-themes
 npx shadcn@latest add dropdown-menu 
 
 --> Loading  and not found page
+
+-->Responsive Sheet Menu
+npx shadcn@latest add sheet
+
+with sample data (sample-data.ts)
+--product-list
+--product-card
+npx shadcn@latest add card
+--product-price
+
+
+Session 2
+Neon for serverless POSTGRES / Azure SQL Database for serverless mssql
+PRISMA for ORM
+
+npm i -D prisma @prisma/client
+npx prisma init
+added prisma for vscode ctrl + shift + P -> Open User Settings(JSON)
+add this if not exists
+ ```
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
+}
+```
