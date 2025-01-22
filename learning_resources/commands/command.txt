@@ -1,0 +1,52 @@
+Create a project -> npx create-next-app@latest
+√ What is your project named? ... prostore
+√ Would you like to use TypeScript? ... No / Yes
+√ Would you like to use ESLint? ... No / Yes
+√ Would you like to use Tailwind CSS? ... No / Yes
+√ Would you like your code inside a `src/` directory? ... No / Yes
+√ Would you like to use App Router? (recommended) ... No / Yes
+√ Would you like to use Turbopack for `next dev`? ... No / Yes
+√ Would you like to customize the import alias (`@/*` by default)? ... No / Yes
+Creating a new Next.js app in M:\GITHUB\prostore.
+
+Open with VSCODE Directly  -> code prostore
+Run the Project -> npm run dev
+-->sfc for Generating Default .tsx values /rafce for .jsx values
+--> Default Project Setup
+
+-> On app -> page.tsx which is the main landing page remove all default values.
+-> On app -> layout.tsx remove all fonts and add Inter(Google) font and related code.
+-> Delete the global/s.css which have default styling CSS/Tailwind.
+-> Add a Folder named assets -> styles -> globals.css and make reference on layout.css
+    also add loader.gif on assets folder.
+-> Delete Defaults svg on public folder if not needed & add your default project based image/s on public -> images
+-> if a custom favicon.ico then replace the default with custom.
+
+--> Add ShadCN UI Utility based library for design.
+npx shadcn@latest init
+√ Which style would you like to use? » Default
+√ Which color would you like to use as the base color? » Slate
+? Would you like to use CSS variables for theming? »  yes
+
+It looks like you are using React 19.
+Some packages may fail to install due to peer dependency issues in npm (see https://ui.shadcn.com/react-19).
+
+√ How would you like to proceed? » Use --legacy-peer-deps
+
+npx shadcn@latest add button 
+ ->  add `components` added a .tsx file if exists or not create/add on components/ui/button.tsx
+
+-->Root layout
+there already a layout.tsx but if need multiple layout then create a folder named (root) -> add new layout.tsx
+->move app->page.tsx into (root)folder.
+for constant files make a folder into lib folder then create a file named index.ts
+for environment variables create .env file on root project.
+--> Header On components/shared/header [index.tsx]
+--> Footer( as normal)  On components/ [footer.tsx]
+
+npm i lucide-react
+-->Theme Mode Toggle
+npm i next-themes
+npx shadcn@latest add dropdown-menu 
+
+--> Loading  and not found page
