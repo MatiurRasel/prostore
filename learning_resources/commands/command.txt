@@ -10,6 +10,22 @@ Create a project -> npx create-next-app@latest
 Creating a new Next.js app in M:\GITHUB\prostore.
 
 Open with VSCODE Directly  -> code prostore
+--GIT
+…or create a new repository on the command line
+echo "# prostore" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M master
+git remote add origin https://github.com/MatiurRasel/prostore.git
+git push -u origin master
+…or push an existing repository from the command line
+git remote add origin https://github.com/MatiurRasel/prostore.git
+git branch -M master
+git push -u origin master
+
+
+
 Run the Project -> npm run dev
 -->sfc for Generating Default .tsx values /rafce for .jsx values
 --> Default Project Setup
