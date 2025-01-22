@@ -6,11 +6,7 @@ Go to https://uploadthing.com/ and sign in with Github. Then click on the "Creat
 
 They should look something like this:
 
-```
-UPLOADTHING_TOKEN=''
-UPLOADTHING_SECRET=''
-UPLOADTHING_APPID=''
-```
+
 
 We need to install the following packages:
 
