@@ -79,7 +79,7 @@ npx shadcn@latest add card
 
 Session 2
 Neon for serverless POSTGRES / Azure SQL Database for serverless mssql
-PRISMA for ORM
+PRISMA for ORM , Migration, Seed Data
 
 npm i -D prisma @prisma/client
 npx prisma init
@@ -91,3 +91,23 @@ add this if not exists
   }
 }
 ```
+--add Migration to db
+npx prisma generate
+--generate DDL to db
+npx prisma migrate dev --name init
+
+--check data/database like pgadmin
+npx prisma studio
+--seed data into db
+npx tsx db/seed
+
+--load data from database not as static files need to use Server Actions and Mutations
+Server Actions -> For Single model Monolith Application 
+API Route -> For multiple model like (different clients.(REACT,Mobile Apps etc)).
+
+--For Data Validate Zod Validation
+npm i zod
+
+--configuration for  neon serverless
+npm i @neondatabase/serverless @prisma/adapter-neon ws
+npm i -D @types/ws bufferutil
