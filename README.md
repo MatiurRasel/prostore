@@ -152,7 +152,7 @@ npx tsx ./db/seed
 
 I am not sure how long I will have this demo up but you can view it here:
 
-https://prostore-one.vercel.app/
+https://prostore-gules-two.vercel.app/
 
 ## Note On Vercel Deployment For Hobby Plan
 

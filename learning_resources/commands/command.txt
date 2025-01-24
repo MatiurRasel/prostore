@@ -115,3 +115,6 @@ npm i -D @types/ws bufferutil
 --Product Details page
 npx shadcn@latest add badge
 --Product Image Components
+
+--ON VERCEL DEPLOYMENT BUILD & OUTPUT SETTINGS INSTALL command
+npm install --legacy-peer-deps
