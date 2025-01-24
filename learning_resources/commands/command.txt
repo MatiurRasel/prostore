@@ -114,3 +114,4 @@ npm i -D @types/ws bufferutil
 
 --Product Details page
 npx shadcn@latest add badge
+--Product Image Components
