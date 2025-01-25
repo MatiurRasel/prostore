@@ -118,3 +118,9 @@ npx shadcn@latest add badge
 
 --ON VERCEL DEPLOYMENT BUILD & OUTPUT SETTINGS INSTALL command
 npm install --legacy-peer-deps
+
+Session 3
+Prisma User Related model
+npx prisma generate
+npx prisma migrate dev --name add_user_based_tables
+npx prisma studio
