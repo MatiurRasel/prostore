@@ -120,7 +120,38 @@ npx shadcn@latest add badge
 npm install --legacy-peer-deps
 
 Session 3
-Prisma User Related model
+--Prisma User Related model
 npx prisma generate
 npx prisma migrate dev --name add_user_based_tables
 npx prisma studio
+
+--Seed User Data
+npm i bcrypt-ts-edge
+npx tsx db/seed
+npx prisma studio
+
+--Next Auth Setup
+--For V5
+npm i next-auth@beta 
+--Prisma adapter
+npm i @auth/prisma-adapter
+
+openssl rand -base64 32
+OR IN POWERSHELL
+[convert]::ToBase64String((1..32 | ForEach-Object {Get-Random -Minimum 0 -Maximum 255} | ForEach-Object {[byte]$_}))
+hWz0WTJHnlHv+tzrB7zKZJ9/M8m0dA+7ss6mdb5A6II=
+
+--NEXT AUTH Catch ALL API Route
+make file named route.ts on app/api/auth/[...nextauth]
+
+--Sign in & Sign out
+--Actions
+--Credentials Sign In Form
+--Auth layout
+--Signin Form
+--Hook up Sign in form
+--Callback URL Redirection
+--- For any server components directly use auth(.ts) but for client components need to use hooks (useSessions)
+--Sign up Zod Schema & Action With adding Temp Password
+--Sign up Page & Form
+
