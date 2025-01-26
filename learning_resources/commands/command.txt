@@ -154,4 +154,6 @@ make file named route.ts on app/api/auth/[...nextauth]
 --- For any server components directly use auth(.ts) but for client components need to use hooks (useSessions)
 --Sign up Zod Schema & Action With adding Temp Password
 --Sign up Page & Form
+--Sign up error handling
+--customize token with jwt
 
