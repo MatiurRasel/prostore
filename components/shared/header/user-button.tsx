@@ -9,7 +9,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Ghost, UserIcon } from "lucide-react";
+import {  UserIcon } from "lucide-react";
 
 
 const UserButton = async () => {
