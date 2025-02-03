@@ -157,3 +157,14 @@ make file named route.ts on app/api/auth/[...nextauth]
 --Sign up error handling
 --customize token with jwt
 
+---Session 4
+Cart Schema/model, Cart Actions, NextAuth Callback, Dynamic Cart button, Add to Cart Components,  UseTransition Hook
+
+--Cart Zod Schema & Prisma model
+npx shadcn@latest add toast
+--Add to Cart Component
+--Session Cart ID cookie
+--Get Item From Cart
+--
+
+
