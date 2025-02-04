@@ -165,6 +165,9 @@ npx shadcn@latest add toast
 --Add to Cart Component
 --Session Cart ID cookie
 --Get Item From Cart
---
+--Price Calc & Add to Database
+--Handle Quantity & Multiple Products
+--Remove Cart Action
+
 
 
