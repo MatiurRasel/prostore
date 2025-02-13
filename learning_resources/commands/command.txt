@@ -168,6 +168,9 @@ npx shadcn@latest add toast
 --Price Calc & Add to Database
 --Handle Quantity & Multiple Products
 --Remove Cart Action
+--Dynamic Cart Button
+--Smooth UI with UseTransition hook
 
 
+---Session 5
 
