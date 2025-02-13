@@ -16,3 +16,11 @@ export const signInDefaultValues = {
     password: '',
     confirmPassword: '',
   };
+
+  export const shippingAddressDefaultValues = {
+    fullName: 'John Bob',
+    streetAddress: '84 Zoo Road, Mirpur',
+    city: 'Dhaka',
+    postalCode: '1207',
+    country: 'BD'
+  };

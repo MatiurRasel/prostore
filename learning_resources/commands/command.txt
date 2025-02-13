@@ -173,4 +173,5 @@ npx shadcn@latest add toast
 
 
 ---Session 5
-
+Cart Page, ShadCN UI Table, Format Currency, Shipping Address Page, Shipping Address Form, Form Submission/Action, Checkout Steps Component
+npx shadcn@latest add table
