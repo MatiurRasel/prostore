@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {Table, TableBody, TableHeader, TableHead, TableRow, TableCell} from '@/components/ui/table';
 import { Button } from "@/components/ui/button";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card, CardContent} from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 
 const CartTable = ({cart}: {cart?: Cart}) => {
