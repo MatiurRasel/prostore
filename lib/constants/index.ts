@@ -18,9 +18,9 @@ export const signInDefaultValues = {
   };
 
   export const shippingAddressDefaultValues = {
-    fullName: 'John Bob',
+    fullName: 'Desha Rahman',
     streetAddress: '84 Zoo Road, Mirpur',
     city: 'Dhaka',
     postalCode: '1207',
-    country: 'BD'
+    country: 'Bangladesh'
   };
