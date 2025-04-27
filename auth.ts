@@ -74,6 +74,7 @@ export const config = {
         async jwt({token, user, trigger, session} : any) {
             //assign user fields to the token
             if(user) {
+                token.id = user.id;
                 token.role = user.role;
 
                 //if user has no name then  use the email
@@ -86,10 +87,68 @@ export const config = {
                         data: {name: token.name}
                     });
                 }
+
+                if(trigger === 'signIn' || trigger === 'signUp') {
+                    const cookieObject = await cookies();
+                    const sessionCartId = cookieObject.get('sessionCartId')?.value;
+
+                    if(sessionCartId) {
+                        const sessionCart = await prisma.cart.findFirst({
+                            where: {
+                                id: sessionCartId
+                            }
+                        });
+
+                        if(sessionCart) {
+                            //Delete the session cart
+                            await prisma.cart.deleteMany({
+                                where: {
+                                    userId: user.id,
+                                },
+
+                            });
+
+                            //assign new cart 
+                            await prisma.cart.update({
+                                where: {
+                                    id: sessionCart.id
+                                },
+                                data: {
+                                    userId: user.id,
+                                }
+                            });
+                        }
+                    }
+                }
             }
+
+            //Handle session updates
+            if(session?.user.name && trigger === 'update') {
+                //If the session has a name, set the token name to the session name
+                token.name = session.user.name;
+
+            }
+
             return token;
         },
         authorized({request, auth}: any) {
+            //Array of regex patterns to match the paths that should be protected
+            const protectedPaths = [
+                /\/shipping-address/,
+                /\/payment-method/,
+                /\/place-order/,
+                /\/profile/,
+                /\/user\/(.*)/,
+                /\/order\/(.*)/,
+                /\/admin/,
+            ];
+
+            //Get pathname from the request URL object.
+            const {pathname} = request.nextUrl;
+
+            //check if user is not authenticated and accessing a protected path
+            if(!auth && protectedPaths.some((path) => path.test(pathname))) return false;
+
             // Check for session cart cookie
             if(!request.cookies.get('sessionCartId')) {
                 

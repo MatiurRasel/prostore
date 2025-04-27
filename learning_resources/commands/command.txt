@@ -178,3 +178,6 @@ npx shadcn@latest add table
 npm i react-hook-form
 npm i react-hook-form @hookform/resolvers
 npx shadcn@latest add form
+
+---Session 6
+Payment method select, Order/OrderItem Schema, Create Order Action, Place Order Page, Order Details Page, Format Utility Functions.

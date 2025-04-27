@@ -18,9 +18,14 @@ export const signInDefaultValues = {
   };
 
   export const shippingAddressDefaultValues = {
-    fullName: 'Desha Rahman',
-    streetAddress: '84 Zoo Road, Mirpur',
-    city: 'Dhaka',
-    postalCode: '1207',
-    country: 'Bangladesh'
+    fullName: '',
+    streetAddress: '',
+    city: '',
+    postalCode: '',
+    country: ''
   };
+
+  export const PAYMENT_METHODS =  process.env.PAYMENT_METHODS ? 
+    process.env.PAYMENT_METHODS.split(', ') : ['PayPal', 'Stripe', 'CashOnDelivery'];
+
+  export const DEFAULT_PAYMENT_METHOD = process.env.DEFAULT_PAYMENT_METHOD || 'PayPal';
