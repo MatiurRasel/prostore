@@ -181,3 +181,7 @@ npx shadcn@latest add form
 
 ---Session 6
 Payment method select, Order/OrderItem Schema, Create Order Action, Place Order Page, Order Details Page, Format Utility Functions.
+npx shadcn@latest add radio-group
+npx prisma generate
+npx prisma migrate dev --name add_order
+npx prisma studio
