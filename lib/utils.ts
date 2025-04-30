@@ -16,6 +16,7 @@ export function cn(...inputs: ClassValue[]) {
 // because Prisma objects can have circular references or other non-serializable properties.
 // The function uses JSON.stringify to convert the object to a JSON string
 // and then parses it back to a regular JavaScript object using JSON.parse.
+
 export function convertToPlainObject<T>(value: T) : T {
   return JSON.parse(JSON.stringify(value));
 }
@@ -26,19 +27,20 @@ export function convertToPlainObject<T>(value: T) : T {
 // and then padding the decimal part with zeros if necessary.
 // For example, if the input is 123.4, it will return '123.40', and if the input is 123,
 // it will return '123.00'.
+
 export function formatNumberWithDecimal(num: number): string {
   const [int,decimal] = num.toString().split('.');
   return decimal ? `${int}.${decimal.padEnd(2,'0')}` : `${int}.00`;
 }
 
 //Format errors
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 // This function takes an error object as input and formats it into a user-friendly message.
 // It checks the type of error and handles different cases, such as ZodError or PrismaClientKnownRequestError.
 // For ZodError, it extracts the field errors and joins them into a single string.
 // For PrismaClientKnownRequestError, it checks for a specific error code (P2002) and formats the message accordingly.
 // For other errors, it simply returns the error message as a string.
 // This is useful for displaying error messages to users in a consistent and readable format.
+
 export async function formatError(error: any) {
   if(error.name === 'ZodError') {
     //Handle Zod Error
@@ -65,7 +67,8 @@ export async function formatError(error: any) {
 // If the input is neither a number nor a string, it throws an error.
 // This is useful for ensuring that numerical values are consistently formatted to two decimal places,
 // which is common in financial applications or when displaying prices.
- export function round2(value: number |string) {
+ 
+export function round2(value: number |string) {
   if(typeof value === 'number') {
     return Math.round((value + Number.EPSILON) * 100)/100;
   } else if(typeof value === 'string') {
@@ -74,6 +77,7 @@ export async function formatError(error: any) {
     throw new Error('Value is not a number or string');
   }
  }
+
 //  bn-BD
 //Format currency
 // This function formats a given number or string as a currency value.
@@ -86,7 +90,8 @@ export async function formatError(error: any) {
 // The function returns the formatted currency string.
 // The formatter is created using the 'en-US' locale and the 'USD' currency.
 // The minimumFractionDigits option is set to 2 to ensure that the formatted value always has two decimal places.
- const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
+ 
+const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
   currency: 'USD',
   style: 'currency',
   minimumFractionDigits: 2,
@@ -101,7 +106,8 @@ export async function formatError(error: any) {
   // The function returns the formatted currency string.
   // The formatter is created using the 'en-US' locale and the 'USD' currency.
   // The minimumFractionDigits option is set to 2 to ensure that the formatted value always has two decimal places.
- export function formatCurrency(amount: number | string | null) {
+ 
+  export function formatCurrency(amount: number | string | null) {
   
   if (typeof amount === 'number') {
     return CURRENCY_FORMATTER.format(amount);
