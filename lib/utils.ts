@@ -119,3 +119,57 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
     return Error('NaN');
   }
 }
+
+//Shorten UUID
+export function formatId(id: string) {
+  return `..${id.substring(id.length - 6)}`;
+}
+
+//Format the date and times
+export const formatDateTime = (dateString: Date) => {
+  const dateTimeOptions: Intl.DateTimeFormatOptions = {
+    month: 'short', //abbreviated month name (e.g., "Jan")
+    year: 'numeric', //full numeric year (e.g., "2023")
+    day:'numeric', //numeric day of the month (e.g., "15")
+    hour:'numeric', //numeric hour (e.g., "3")
+    minute:'numeric', //numeric minute (e.g., "45")
+    second:'numeric', //numeric second (e.g., "30")
+    hour12: true, //12-hour clock format (e.g., "3:45 PM")
+  };
+
+  const dateOptions: Intl.DateTimeFormatOptions = {
+    weekday: 'short', //abbreviated weekday name (e.g., "Mon")
+    month: 'short', //abbreviated month name (e.g., "Jan")
+    year: 'numeric', //full numeric year (e.g., "2023")
+    day: 'numeric', //numeric day of the month (e.g., "15")
+  };
+
+  const timeOptions: Intl.DateTimeFormatOptions = {
+    hour: 'numeric', //numeric hour (e.g., "3")
+    minute: 'numeric', //numeric minute (e.g., "45")
+    //second: 'numeric', //numeric second (e.g., "30")
+    hour12: true, //12-hour clock format (e.g., "3:45 PM")
+  };
+
+  const formattedDateTime: string = new Date(dateString).toLocaleString(
+    'en-US',
+    dateTimeOptions
+  );
+
+  const formattedDate: string = new Date(dateString).toLocaleString(
+    'en-US',
+    dateOptions
+  );
+
+  const formattedTime: string = new Date(dateString).toLocaleString(
+    'en-US',
+    timeOptions
+  );
+
+  return {
+    dateTime: formattedDateTime,
+    dateOnly: formattedDate,
+    timeOnly: formattedTime,
+  };
+
+};

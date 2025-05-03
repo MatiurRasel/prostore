@@ -185,3 +185,10 @@ npx shadcn@latest add radio-group
 npx prisma generate
 npx prisma migrate dev --name add_order
 npx prisma studio
+npx shadcn@latest add badge
+
+---Session 7
+PayPal Sandbox Setup, PayPal API File, Generate Access Token, Create Order, Capture Payment, Jest Testing, Paypal Action, Paypal Buttons
+npm i -D jest ts-jest ts-node @types/jest @types/node dotenv
+npm init jest@latest
+npm test
