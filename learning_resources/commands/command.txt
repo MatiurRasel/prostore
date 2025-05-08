@@ -192,3 +192,7 @@ PayPal Sandbox Setup, PayPal API File, Generate Access Token, Create Order, Capt
 npm i -D jest ts-jest ts-node @types/jest @types/node dotenv
 npm init jest@latest
 npm test
+npm i @paypal/react-paypal-js
+
+---Session 8
+User Layout & Menu, Get User Orders, Orders Pagination, Update Profile Action, User Profile Form

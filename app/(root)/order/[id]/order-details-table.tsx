@@ -7,8 +7,21 @@ import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Order } from "@/types";
 import Link from "next/link";
 import Image from "next/image";
+import { useToast } from "@/hooks/use-toast";
+import {
+    usePayPalScriptReducer,
+    PayPalButtons,
+    PayPalScriptProvider,
+} from '@paypal/react-paypal-js';
+import { 
+    createPaypalOrder,
+    approvePaypalOrder
+ } from "@/lib/actions/order.actions";
 
-const OrderDetailsTable = ({order}: {order: Order}) => {
+const OrderDetailsTable = ({order, paypalClientId}: {
+    order: Order, 
+    paypalClientId: string
+}) => {
     const { 
         id,
         itemsPrice,
@@ -24,7 +37,48 @@ const OrderDetailsTable = ({order}: {order: Order}) => {
         deliveredAt,
     } = order;
 
+    const { toast } = useToast();
+
+    const PrintLoadingState = () => {
+        const [{ isPending, isRejected }] = usePayPalScriptReducer();
+        let status = '';
+        if(isPending) {
+            status = 'Loading PayPal...';
+        }
+        else if(isRejected) {
+            status = 'Error loading PayPal';
+        }
+        return status;
+    }
+    const handleCreatePayPalOrder = async () => {
+        const res = await createPaypalOrder(order.id);
+
+        if(!res.success) {
+            toast({
+                title: 'Error',
+                description: res.message,
+                variant: 'destructive',
+            });
+            return res;
+        }
+
+        return res.data;
+    }
+
+    const handleApprovePayPalOrder = async (data: {orderID: string }) => {
+        const res = await approvePaypalOrder(order.id, data);
+
+
+        toast({
+            title: res.success ? 'Success' : 'Error',
+            description: res.success ? 'Payment successful' : res.message,  
+            variant: res.success ? 'default' : 'destructive',
+        });
+        
+    }
+
     return ( 
+
         <>
         <h1 className="py-4 text-2xl">Order {formatId(id)}</h1>
         <div className="grid md:grid-cols-3 md:gap-5">
@@ -126,6 +180,19 @@ const OrderDetailsTable = ({order}: {order: Order}) => {
                                                 <div>Total</div>
                                                 <div>{formatCurrency(totalPrice)}</div>
                                         </div>
+                                        {/* Paypal Payment */}
+                                        {!isPaid && paymentMethod === 'PayPal' && (
+                                            <div>
+                                                <PayPalScriptProvider options={{ "client-id": paypalClientId }}>
+                                                    <PrintLoadingState />
+                                                    <PayPalButtons 
+                                                        createOrder={handleCreatePayPalOrder}
+                                                        onApprove={handleApprovePayPalOrder}
+                                                    />
+                                                </PayPalScriptProvider>
+
+                                            </div>
+                                        )}
                                     </CardContent>
                                 </Card>
                             </div>

@@ -177,3 +177,143 @@ export async function createPaypalOrder(orderId: string) {
         };
     }
 }
+
+//Approve the paypal order and update the order with the payment result
+export async function approvePaypalOrder(orderId: string, 
+    data: {
+        orderID: string
+    }
+) {
+    try {
+        const order = await prisma.order.findFirst({
+            where: {
+                id: orderId,
+            },
+        });
+
+        if(order) {
+            const captureData = await paypal.capturePayment(data.orderID);
+            
+            if(!captureData || captureData.id !== (order.paymentResult as PaymentResult)?.id || captureData.status !== 'COMPLETED') {
+                throw new Error('Error in PayPal payment');
+            }
+            
+            //update order to paid
+
+            await updateOrderToPaid({
+                orderId: orderId,
+                paymentResult: {
+                    status: captureData.status,
+                    id: captureData.id,
+                    email_address: captureData.payer.email_address,
+                    pricePaid: captureData.purchase_units[0]?.payments?.captures[0]?.amount?.value,
+                },
+            })
+
+
+            revalidatePath(`/order/${orderId}`);
+
+            return {
+                success: true,
+                message: 'Your order has been paid successfully',
+            };
+        }
+        else {
+            throw new Error('Order not found');
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: formatError(error),
+        };
+    }
+}
+
+//Update order to paid
+export async function updateOrderToPaid({
+    orderId,
+    paymentResult,
+}: {
+    orderId: string;
+    paymentResult?: PaymentResult;
+}) {
+    try {
+        const order = await prisma.order.findFirst({
+            where: {
+                id: orderId,
+            },
+            include: {
+                orderitems: true
+            }
+        });
+
+        if(order) {
+            if(order.isPaid) {
+                throw new Error('Order is already paid');
+            }
+
+            //Transaction to update the order and account for product stock
+            await prisma.$transaction(async (tx) => {
+                //Iterate over products and update the stock
+                for (const item of order.orderitems) {
+                    await tx.product.update({
+                        where: {
+                            id: item.productId,
+                        },
+                        data: {
+                            stock: {
+                                // decrement: item.qty,
+                                increment: -item.qty,
+                            },
+                        },
+                    });
+                }
+
+                //update order to paid
+                await tx.order.update({
+                    where: {
+                        id: orderId,
+                    },
+                    data: {
+                        isPaid: true,
+                        paidAt: new Date(),
+                        paymentResult
+                    },
+                });
+
+            });
+
+            //Get the updated order after the transaction
+            const updatedOrder = await prisma.order.findFirst({
+                where: {
+                    id: orderId,
+                },
+                include: {
+                    orderitems: true,
+                    user:{
+                        select: {
+                            name: true,
+                            email: true,
+                        }
+                    }
+                },
+            });
+
+            if(!updatedOrder) throw new Error('Order not found');
+            //Send email to user with the order details
+
+            return {
+                success: true,
+                message: 'Your order has been paid successfully',
+            };
+        }
+        else {
+            throw new Error('Order not found');
+        }
+    } catch (error) {
+        return {
+            success: false,
+            message: formatError(error),
+        };
+    }
+}
