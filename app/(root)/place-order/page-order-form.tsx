@@ -16,9 +16,14 @@ const PlaceOrderForm = () => {
 
         const res = await createOrder();
         
-        if(res.redirectTo) {
+        // if(res.redirectTo) {
+        //     router.push(res.redirectTo);
+        // } 
+
+        if ('redirectTo' in res && typeof res.redirectTo === 'string') {
             router.push(res.redirectTo);
-        } 
+          }
+          
     }
 
     const PlaceOrderButton = () => {

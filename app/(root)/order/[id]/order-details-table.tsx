@@ -183,13 +183,22 @@ const OrderDetailsTable = ({order, paypalClientId}: {
                                         {/* Paypal Payment */}
                                         {!isPaid && paymentMethod === 'PayPal' && (
                                             <div>
-                                                <PayPalScriptProvider options={{ "client-id": paypalClientId }}>
+                                                {/* <PayPalScriptProvider options={{ "client-id": paypalClientId }}>
+                                                    <PrintLoadingState />
+                                                    <PayPalButtons 
+                                                        createOrder={handleCreatePayPalOrder}
+                                                        onApprove={handleApprovePayPalOrder}
+                                                    />
+                                                </PayPalScriptProvider> */}
+
+                                                <PayPalScriptProvider options={{ clientId: paypalClientId }}>
                                                     <PrintLoadingState />
                                                     <PayPalButtons 
                                                         createOrder={handleCreatePayPalOrder}
                                                         onApprove={handleApprovePayPalOrder}
                                                     />
                                                 </PayPalScriptProvider>
+
 
                                             </div>
                                         )}

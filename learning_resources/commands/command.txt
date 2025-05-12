@@ -196,3 +196,4 @@ npm i @paypal/react-paypal-js
 
 ---Session 8
 User Layout & Menu, Get User Orders, Orders Pagination, Update Profile Action, User Profile Form
+npm i query-string

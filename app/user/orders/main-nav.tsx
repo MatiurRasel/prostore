@@ -3,8 +3,6 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { title } from "process";
-import { use } from "react";
 
 const links = [
     {

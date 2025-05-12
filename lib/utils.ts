@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-
+import qs from 'query-string';
+import { ZodError } from "zod";
+import { Prisma } from "@prisma/client";
 //Conditionally join classNames together
 // This is useful for conditionally applying classNames to elements
 // based on certain conditions or props.
@@ -41,23 +43,44 @@ export function formatNumberWithDecimal(num: number): string {
 // For other errors, it simply returns the error message as a string.
 // This is useful for displaying error messages to users in a consistent and readable format.
 
-export async function formatError(error: any) {
-  if(error.name === 'ZodError') {
-    //Handle Zod Error
-    const fieldErrors = Object.keys(error.errors).map((field) => error.errors[field].message);
-
-    return fieldErrors.join('. ')
-  } else if(error.name === 'PrismaClientKnownRequestError' && error.code === 'P2002') {
-    //handle prisma error
-    const field = error.meta?.target ? error.meta.target[0] : 'Field';
+type CustomError = ZodError | Prisma.PrismaClientKnownRequestError | Error | unknown;
+export async function formatError(error: CustomError): Promise<string> {
+  if (error instanceof ZodError) {
+    const fieldErrors = error.errors.map((err) => err.message);
+    return fieldErrors.join('. ');
+  } else if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error.code === 'P2002'
+  ) {
+    const field = Array.isArray(error.meta?.target) && typeof error.meta?.target[0] === 'string'
+      ? error.meta.target[0]
+      : 'Field';
     return `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`;
+  } else if (error instanceof Error) {
+    return error.message;
   } else {
-    //handle others error
-    return typeof error.message === 'string'
-      ? error.message
-      : JSON.stringify(error.message);
+    return JSON.stringify(error);
   }
 }
+
+
+// export async function formatError(error: any) {
+//   if(error.name === 'ZodError') {
+//     //Handle Zod Error
+//     const fieldErrors = Object.keys(error.errors).map((field) => error.errors[field].message);
+
+//     return fieldErrors.join('. ')
+//   } else if(error.name === 'PrismaClientKnownRequestError' && error.code === 'P2002') {
+//     //handle prisma error
+//     const field = error.meta?.target ? error.meta.target[0] : 'Field';
+//     return `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`;
+//   } else {
+//     //handle others error
+//     return typeof error.message === 'string'
+//       ? error.message
+//       : JSON.stringify(error.message);
+//   }
+// }
 
 //Round number to 2 decimal places
 // This function takes a number or string as input and rounds it to two decimal places.
@@ -107,18 +130,17 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
   // The formatter is created using the 'en-US' locale and the 'USD' currency.
   // The minimumFractionDigits option is set to 2 to ensure that the formatted value always has two decimal places.
  
-  export function formatCurrency(amount: number | string | null) {
-  
-  if (typeof amount === 'number') {
-    return CURRENCY_FORMATTER.format(amount);
-  } 
-  else if (typeof amount === 'string') {
-    return CURRENCY_FORMATTER.format(Number(amount));
-  } 
-  else {
-    return Error('NaN');
+  export function formatCurrency(amount: number | string | null): string {
+    if (typeof amount === 'number') {
+      return CURRENCY_FORMATTER.format(amount);
+    } else if (typeof amount === 'string') {
+      const num = Number(amount);
+      return isNaN(num) ? 'Invalid amount' : CURRENCY_FORMATTER.format(num);
+    } else {
+      return 'Invalid amount';
+    }
   }
-}
+  
 
 //Shorten UUID
 export function formatId(id: string) {
@@ -173,3 +195,26 @@ export const formatDateTime = (dateString: Date) => {
   };
 
 };
+
+// Form the pagination links
+export function formUrlQuery({
+  params,
+  key, 
+  value
+}: {
+  params: string;
+  key: string;
+  value: string | null;
+}) {
+  const query = qs.parse(params);
+
+  query[key] = value;
+
+  return qs.stringifyUrl({
+    url:window.location.pathname,
+    query,
+  },{
+    skipNull: true,
+  });
+
+}
