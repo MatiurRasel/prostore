@@ -43,27 +43,51 @@ export function formatNumberWithDecimal(num: number): string {
 // For other errors, it simply returns the error message as a string.
 // This is useful for displaying error messages to users in a consistent and readable format.
 
+// type CustomError = ZodError | Prisma.PrismaClientKnownRequestError | Error | unknown;
+// export async function formatError(error: CustomError): Promise<string> {
+//   if (error instanceof ZodError) {
+//     const fieldErrors = error.errors.map((err) => err.message);
+//     return fieldErrors.join('. ');
+//   } else if (
+//     error instanceof Prisma.PrismaClientKnownRequestError &&
+//     error.code === 'P2002'
+//   ) {
+//     const field = Array.isArray(error.meta?.target) && typeof error.meta?.target[0] === 'string'
+//       ? error.meta.target[0]
+//       : 'Field';
+//     return `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`;
+//   } else if (error instanceof Error) {
+//     return error.message;
+//   } else {
+//     return JSON.stringify(error);
+//   }
+// }
+
 type CustomError = ZodError | Prisma.PrismaClientKnownRequestError | Error | unknown;
-export async function formatError(error: CustomError): Promise<string> {
+export function formatError(error: CustomError): string {
   if (error instanceof ZodError) {
     const fieldErrors = error.errors.map((err) => err.message);
     return fieldErrors.join('. ');
-  } else if (
+  }
+
+  if (
     error instanceof Prisma.PrismaClientKnownRequestError &&
     error.code === 'P2002'
   ) {
-    const field = Array.isArray(error.meta?.target) && typeof error.meta?.target[0] === 'string'
-      ? error.meta.target[0]
-      : 'Field';
+    const field =
+      Array.isArray(error.meta?.target) && typeof error.meta.target[0] === 'string'
+        ? error.meta.target[0]
+        : 'Field';
+
     return `${field.charAt(0).toUpperCase() + field.slice(1)} already exists`;
-  } else if (error instanceof Error) {
-    return error.message;
-  } else {
-    return JSON.stringify(error);
   }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return JSON.stringify(error);
 }
-
-
 // export async function formatError(error: any) {
 //   if(error.name === 'ZodError') {
 //     //Handle Zod Error
@@ -141,6 +165,12 @@ const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
     }
   }
   
+  //Format Number
+  const NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
+
+  export function formatNumber(number: number) {
+    return NUMBER_FORMATTER.format(number);
+  }
 
 //Shorten UUID
 export function formatId(id: string) {

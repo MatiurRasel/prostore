@@ -197,3 +197,8 @@ npm i @paypal/react-paypal-js
 ---Session 8
 User Layout & Menu, Get User Orders, Orders Pagination, Update Profile Action, User Profile Form
 npm i query-string
+
+---Session 9
+Admin Layout & Menu, Admin Overview Area, Sales Chart(Recharts), Admin Orders Page, Delete Orders, Update Orders
+npm install recharts
+npx shadcn@latest add alert-dialog dialog

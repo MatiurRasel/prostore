@@ -142,12 +142,18 @@ export const config = {
                 /\/order\/(.*)/,
                 /\/admin/,
             ];
-
+debugger
             //Get pathname from the request URL object.
             const {pathname} = request.nextUrl;
 
             //check if user is not authenticated and accessing a protected path
             if(!auth && protectedPaths.some((path) => path.test(pathname))) return false;
+
+             // 🚫 Additional check: Block non-admin users from accessing /admin routes
+            // if (/^\/admin/.test(pathname) && auth?.user?.role !== 'admin') {
+            //     return false;
+            // }
+
 
             // Check for session cart cookie
             if(!request.cookies.get('sessionCartId')) {
