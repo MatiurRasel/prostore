@@ -30,7 +30,7 @@ const CartTable = ({cart}: {cart?: Cart}) => {
             <ShoppingCart size={96} className="text-gray-300 mb-6" strokeWidth={1} />
             <h2 className="text-2xl font-semibold mb-2">Your cart is empty!</h2>
             <p className="text-gray-500 mb-6">
-                Looks like you haven't added anything to your cart yet. <br />
+                Looks like you haven&apos;t added anything to your cart yet. <br />
                 Start browsing to find something amazing!
             </p>
             <Link href='/' passHref>

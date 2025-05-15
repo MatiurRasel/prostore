@@ -43,7 +43,7 @@ const DeleteDialog = ({id, action}: {
                         Are you absolutely sure you want to delete this item?
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                        This action cannot be undone
+                        This action can&apos;t be undone
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>

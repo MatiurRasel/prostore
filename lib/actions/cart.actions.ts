@@ -1,7 +1,7 @@
 'use server';
 import { CartItem } from "@/types";
 import { cookies } from "next/headers";
-import { convertToPlainObject, formatError, round2, calcPrice } from "../utils";
+import { convertToPlainObject, formatError,  calcPrice } from "../utils";
 import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { cartItemsSchema, insertCartSchema } from "../validators";
@@ -128,7 +128,7 @@ export async function addItemsToCart(data:CartItem) {
 
 export async function getMyCart() {
     //Check for cart cookie.
-    let sessionCartId = (await cookies()).get('sessionCartId')?.value;
+    const sessionCartId = (await cookies()).get('sessionCartId')?.value;
     // if(!sessionCartId) throw new Error('Cart session not found'); // Commenting out this line
 
     //Get session and user ID
