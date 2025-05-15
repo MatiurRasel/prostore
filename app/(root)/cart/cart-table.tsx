@@ -3,7 +3,7 @@
 import { useToast } from "@/hooks/use-toast";
 import { useTransition } from "react";
 import { addItemsToCart, removeItemFromCart } from "@/lib/actions/cart.actions";
-import { ArrowRight,Loader, Minus, Plus } from "lucide-react";
+import { ArrowRight,Loader, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Cart } from "@/types";
 import Link from "next/link";
@@ -18,13 +18,26 @@ const CartTable = ({cart}: {cart?: Cart}) => {
     const router = useRouter();
     const { toast } = useToast();
     const [isPending, startTransition] = useTransition();
+    const isEmpty = !cart || cart.items.length === 0;
 
     return ( 
     <>
-       <h1 className="py-4 h2-bold">Shopping Cart</h1>
-       {!cart || cart.items.length === 0 ? (
-        <div>
-            Cart id empty. <Link href='/'>Go Shopping</Link>
+       {!isEmpty && (
+            <h1 className="py-4 h2-bold">Shopping Cart</h1>
+       )}
+       {isEmpty ? (
+        <div className="flex flex-col items-center justify-center text-center min-h-[calc(100vh-200px)] md:min-h-[calc(100vh-300px)]">
+            <ShoppingCart size={96} className="text-gray-300 mb-6" strokeWidth={1} />
+            <h2 className="text-2xl font-semibold mb-2">Your cart is empty!</h2>
+            <p className="text-gray-500 mb-6">
+                Looks like you haven't added anything to your cart yet. <br />
+                Start browsing to find something amazing!
+            </p>
+            <Link href='/' passHref>
+                <Button size="lg">
+                    <ArrowRight className="mr-2 h-5 w-5" /> Go Shopping
+                </Button>
+            </Link>
         </div>
        ) : (
         <div className="grid md:grid-cols-4 md:gap-5">

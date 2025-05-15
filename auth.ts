@@ -6,6 +6,8 @@ import { compareSync } from 'bcrypt-ts-edge';
 import type { NextAuthConfig } from 'next-auth';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { CartItem } from '@/types';
+import { calcPrice } from '@/lib/utils';
 
 export const config = {
     pages: {
@@ -89,35 +91,62 @@ export const config = {
                 }
 
                 if(trigger === 'signIn' || trigger === 'signUp') {
-                    const cookieObject = await cookies();
-                    const sessionCartId = cookieObject.get('sessionCartId')?.value;
+                    const cookieStore = await cookies();
+                    const sessionCartIdFromCookie = cookieStore.get('sessionCartId')?.value;
 
-                    if(sessionCartId) {
-                        const sessionCart = await prisma.cart.findFirst({
+                    if(sessionCartIdFromCookie) {
+                        const guestCart = await prisma.cart.findFirst({
                             where: {
-                                id: sessionCartId
+                                sessionCartId: sessionCartIdFromCookie,
+                                userId: null // Explicitly look for a guest cart
                             }
                         });
 
-                        if(sessionCart) {
-                            //Delete the session cart
-                            await prisma.cart.deleteMany({
-                                where: {
-                                    userId: user.id,
-                                },
+                        const userCart = await prisma.cart.findFirst({
+                            where: { userId: user.id }
+                        });
 
-                            });
+                        if (guestCart) {
+                            if (userCart) {
+                                // Merge guestCart items into userCart items
+                                const mergedItems = [...userCart.items as CartItem[]];
+                                (guestCart.items as CartItem[]).forEach(guestItem => {
+                                    const existingItem = mergedItems.find(item => item.productId === guestItem.productId);
+                                    if (existingItem) {
+                                        existingItem.qty += guestItem.qty;
+                                        // Ensure qty does not exceed stock if you have stock checking here
+                                    } else {
+                                        mergedItems.push(guestItem);
+                                    }
+                                });
 
-                            //assign new cart 
-                            await prisma.cart.update({
-                                where: {
-                                    id: sessionCart.id
-                                },
-                                data: {
-                                    userId: user.id,
-                                }
-                            });
+                                const newPrices = calcPrice(mergedItems);
+                                
+                                await prisma.cart.update({
+                                    where: { id: userCart.id },
+                                    data: {
+                                        items: mergedItems as any, 
+                                        ...newPrices // Spread the new prices here
+                                    }
+                                });
+                                await prisma.cart.delete({ where: { id: guestCart.id }});
+                                cookieStore.delete('sessionCartId');
+
+                            } else {
+                                // No existing user cart, assign guest cart to user
+                                const newPrices = calcPrice(guestCart.items as CartItem[]);
+                                await prisma.cart.update({
+                                    where: { id: guestCart.id },
+                                    data: {
+                                        userId: user.id,
+                                        sessionCartId: undefined, // Keeping undefined as per previous linter fix
+                                        items: guestCart.items as any, // Ensure items are also persisted
+                                        ...newPrices // Spread the new prices here
+                                    }
+                                });
+                            }
                         }
+                        // If guestCart does not exist, nothing to merge, user continues with their userCart or no cart.
                     }
                 }
             }

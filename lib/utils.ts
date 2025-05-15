@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge"
 import qs from 'query-string';
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
+import { CartItem } from '@/types';
 //Conditionally join classNames together
 // This is useful for conditionally applying classNames to elements
 // based on certain conditions or props.
@@ -33,6 +34,24 @@ export function convertToPlainObject<T>(value: T) : T {
 export function formatNumberWithDecimal(num: number): string {
   const [int,decimal] = num.toString().split('.');
   return decimal ? `${int}.${decimal.padEnd(2,'0')}` : `${int}.00`;
+}
+
+//Add calcPrice function here
+//Calculate cart prices
+export const calcPrice = (items:CartItem[]) => {
+    const itemsPrice = round2(
+        items.reduce((acc,item) => acc + Number(item.price) * item.qty,0)
+    );
+    const shippingPrice = round2(itemsPrice > 100 ? 0 : 10);
+    const taxPrice = round2(0.15*itemsPrice);
+    const totalPrice = round2(itemsPrice + taxPrice + shippingPrice);
+
+    return {
+        itemsPrice: itemsPrice.toFixed(2),
+        taxPrice: taxPrice.toFixed(2),
+        shippingPrice: shippingPrice.toFixed(2),
+        totalPrice: totalPrice.toFixed(2),
+    }
 }
 
 //Format errors

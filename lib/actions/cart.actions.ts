@@ -1,37 +1,30 @@
 'use server';
 import { CartItem } from "@/types";
 import { cookies } from "next/headers";
-import { convertToPlainObject, formatError, round2 } from "../utils";
+import { convertToPlainObject, formatError, round2, calcPrice } from "../utils";
 import { auth } from "@/auth";
 import { prisma } from "@/db/prisma";
 import { cartItemsSchema, insertCartSchema } from "../validators";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
-
-//Calculate cart prices
-const calcPrice = (items:CartItem[]) => {
-    const itemsPrice = round2(
-        items.reduce((acc,item) => acc + Number(item.price) * item.qty,0)
-    ),
-    shippingPrice = round2(itemsPrice > 100 ? 0 : 10),
-    taxPrice = round2(0.15*itemsPrice),
-    totalPrice = round2(itemsPrice + taxPrice + shippingPrice);
-
-    return {
-        itemsPrice: itemsPrice.toFixed(2),
-        taxPrice: taxPrice.toFixed(2),
-        shippingPrice: shippingPrice.toFixed(2),
-        totalPrice: totalPrice.toFixed(2),
-    }
-
-
-}
+import { randomUUID } from 'crypto';
 
 export async function addItemsToCart(data:CartItem) {
     try {
-        //Check for cart cookie.
-        const sessionCartId = (await cookies()).get('sessionCartId')?.value;
-        if(!sessionCartId) throw new Error('Cart session not found');
+        // Read cookie using the project's apparent pattern (await cookies())
+        const cookieStoreReadable = await cookies();
+        let sessionCartId = cookieStoreReadable.get('sessionCartId')?.value;
+
+        if (!sessionCartId) {
+            sessionCartId = randomUUID();
+            // Set cookie using the standard Next.js API for Server Actions
+            (await cookies()).set('sessionCartId', sessionCartId, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                path: '/',
+                maxAge: 60 * 60 * 24 * 30, // 30 days
+            });
+        }
 
         //Get session and user ID
         const session = await auth();
@@ -135,8 +128,8 @@ export async function addItemsToCart(data:CartItem) {
 
 export async function getMyCart() {
     //Check for cart cookie.
-    const sessionCartId = (await cookies()).get('sessionCartId')?.value;
-    if(!sessionCartId) throw new Error('Cart session not found');
+    let sessionCartId = (await cookies()).get('sessionCartId')?.value;
+    // if(!sessionCartId) throw new Error('Cart session not found'); // Commenting out this line
 
     //Get session and user ID
     const session = await auth();
