@@ -36,10 +36,10 @@ export async function getProductById(productId: string) {
 
 //Get all products
 export async function getAllProducts({
-    query, 
+    //query, 
     limit = PAGE_SIZE,
     page,
-    category
+    //category
 }: {
     query: string;
     limit?: number;
