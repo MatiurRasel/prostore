@@ -459,6 +459,7 @@ export async function deleteOrder(id: string) {
         return {
             success: true,
             message: 'Order deleted successfully'
+            
         }
 
     } catch(error) {

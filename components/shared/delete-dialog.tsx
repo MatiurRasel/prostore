@@ -25,6 +25,7 @@ const DeleteDialog = ({id, action}: {
                 setOpen(false);
                 toast({
                     description:res.message,
+                    variant:'default'
                 })
             }
         });

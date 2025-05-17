@@ -5,12 +5,14 @@ import ProductPrice from "./product-price";
 import { Product } from "@/types";
 
 const ProductCard = ({product} : { product: Product;}) => {
+    const imageUrl = product.images?.[0] || "/images/placeholder.png";
+    
     return ( 
         <Card className="w-full max-w-sm">
             <CardHeader className="p-0 items-center">
                 <Link href={`/product/${product.slug}`}>
                     <Image 
-                        src={product.images[0]}
+                        src={imageUrl}
                         alt={product.name}
                         height={300}
                         width={300}
