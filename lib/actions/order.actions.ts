@@ -16,7 +16,7 @@ import { Prisma } from "@prisma/client";
 //Create order and create the order items
 export async function createOrder() {
     try{
-
+        debugger
         //Get session and user ID
         const session = await auth();
         if(!session) throw new Error('User is not authenticated');
@@ -64,9 +64,11 @@ export async function createOrder() {
             taxPrice: cart.taxPrice,
             totalPrice: cart.totalPrice,
         });
-
+        console.log("order", order);
+        debugger
         //create a transaction to create the order and the order items in the database
         const insertedOrderId = await prisma.$transaction(async (tx) => {
+            debugger
             //Create order
             const insertedOrder = await tx.order.create({ data: order });
             //Create order items from the cart items
@@ -94,6 +96,7 @@ export async function createOrder() {
 
             return insertedOrder.id;
         });
+        console.log("insertedOrderId", insertedOrderId);
         if(!insertedOrderId) throw new Error('Order not created');
 
         return {
@@ -417,12 +420,25 @@ export async function getOrderSummary() {
 //Get all orders
 export async function getAllOrders({
     limit = PAGE_SIZE,
-    page
+    page,
+    query
 }: {
     limit?:number;
     page: number;
+    query: string;
 }) {
+
+    const queryFilter: Prisma.OrderWhereInput = query && query !== 'all' ? {
+        user: {
+            name: {
+                contains: query,
+                mode: 'insensitive'
+            } as Prisma.StringFilter
+        }
+    } : {};
+
     const data = await prisma.order.findMany({
+        where: queryFilter,
         orderBy: {
             createdAt:'desc'
         },

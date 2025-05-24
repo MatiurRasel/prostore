@@ -208,4 +208,11 @@ Get& Display Products, Delete Products, Create Products, Upload thing Config, Up
 npm i slugify
 npx shadcn@latest add textarea
 npm install uploadthing @uploadthing/react
-npx shadcn@latest add checkbox    
+npx shadcn@latest add checkbox   
+
+--Session 11
+Get & Display Users, Delete Users, Edit User Page, Admin Search Form, Orders Search, Users Search
+npx shadcn@latest add select
+
+--Session 12
+Category Drawer, Featured Product Carousel, Search Component, Search Page, Get Filters & Apply, Add Filters Link, Sorting
