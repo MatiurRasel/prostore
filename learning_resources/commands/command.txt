@@ -216,3 +216,6 @@ npx shadcn@latest add select
 
 --Session 12
 Category Drawer, Featured Product Carousel, Search Component, Search Page, Get Filters & Apply, Add Filters Link, Sorting
+npx shadcn@latest add drawer
+npx shadcn@latest add carousel
+npm i embla-carousel-autoplay
