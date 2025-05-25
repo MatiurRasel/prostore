@@ -6,7 +6,7 @@ import ViewAllProductsButton from "@/components/view-all-products-button";
 const Homepage = async () => {
   const latestProducts = await getLatestProducts();
   const featuredProducts = await getFeaturedProducts();
-  console.log(featuredProducts);
+  //console.log(featuredProducts);
   return ( 
   <>
     {featuredProducts.length > 0 && 

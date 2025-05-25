@@ -7,20 +7,23 @@ import UserButton from "./user-button";
 
 const Menu = () => {
     return ( 
-        <div className="flex justify-end gap-3">
-            <nav className="hidden md:flex w-full max-w-xs gap-1">
+        <div className="flex items-center gap-2">
+            <nav className="hidden md:flex items-center gap-1">
                 <ModeToggle/>
-                <Button asChild variant='ghost'>
-                    <Link href="/cart">
-                        <ShoppingCartIcon /> Cart 
+                <Button asChild variant='ghost' className="h-9 px-3">
+                    <Link href="/cart" className="flex items-center gap-2">
+                        <ShoppingCartIcon className="h-4 w-4" /> 
+                        <span className="hidden sm:inline-block">Cart</span>
                     </Link>
                 </Button>
                 <UserButton/>
             </nav>
             <nav className="md:hidden">
                 <Sheet>
-                    <SheetTrigger className="align-middle p-2">
-                        <EllipsisVertical/>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" size="icon" className="h-9 w-9">
+                            <EllipsisVertical className="h-4 w-4"/>
+                        </Button>
                     </SheetTrigger>
                     <SheetContent 
                         className="flex flex-col items-start overflow-y-auto max-h-screen pt-8 pb-6 px-6 w-full sm:w-96"
@@ -46,13 +49,6 @@ const Menu = () => {
                                     <PackageIcon size={20}/> Orders
                                 </Link>
                             </Button>
-                            {Array.from({ length: 10 }).map((_, i) => (
-                                <Button key={i} asChild variant='ghost' className="justify-start w-full p-2 text-base">
-                                    <Link href={`/item-${i+1}`} className="flex items-center gap-3 w-full">
-                                        {/* Placeholder Icon (optional) */} Item {i + 1}
-                                    </Link>
-                                </Button>
-                            ))}
                         </div>
                     </SheetContent>
                 </Sheet>

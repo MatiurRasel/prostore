@@ -12,29 +12,39 @@ export default function AdminLayout({
   }>) {
     return (
         <>
-           <div className="flex flex-col">
-            <div className="border-b container mx-auto">
-                <div className="flex items-center h-16 px-4">
-                    <Link href='/' className="w-22">
-                        <Image
-                            src='/images/logo.svg'
-                            alt={APP_NAME}
-                            width={48}
-                            height={48}/>
-                    </Link>
-                    <MainNav className="mx-6" />
-                    <div className="ml-auto items-center flex space-x-4">
-                        <AdminSearch/>
-                        <Menu/> 
+           <div className="flex flex-col min-h-screen">
+            <header className="w-full border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex items-center justify-between h-14">
+                        <div className="flex items-center gap-6">
+                            <Link href="/admin" className="flex items-center gap-2 group">
+                                <Image
+                                    src="/images/logo.svg"
+                                    alt={APP_NAME}
+                                    width={32}
+                                    height={32}
+                                    className="transition-transform group-hover:scale-105"
+                                />
+                               
+                            </Link>
+                            <MainNav className="hidden md:flex items-center gap-6" />
+                        </div>
+                        
+                        <div className="hidden md:block flex-1 max-w-xl mx-8">
+                            <AdminSearch/>
+                        </div>
+
+                        <div className="flex items-center gap-1">
+                            <Menu/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className="flex-1 space-y-4 p-8 pt-6-container mx-auto">
+            </header>
+            <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {children}
-            </div>
+            </main>
            </div>
         </>
-        
     );
-  }
+}
   
