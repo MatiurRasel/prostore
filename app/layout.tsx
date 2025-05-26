@@ -31,10 +31,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <main className="flex-1 pb-8">
-            {children}
-          </main>
-          <Footer />
+          <div className="flex flex-col min-h-screen">
+            <main className="flex-1 pt-14 pb-32">
+              {children}
+            </main>
+            <Footer />
+          </div>
           <Toaster />
         </ThemeProvider>
       </body>

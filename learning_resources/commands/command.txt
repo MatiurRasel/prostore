@@ -219,3 +219,12 @@ Category Drawer, Featured Product Carousel, Search Component, Search Page, Get F
 npx shadcn@latest add drawer
 npx shadcn@latest add carousel
 npm i embla-carousel-autoplay
+
+--Session 13 
+Prisma Schema Model, Review List Component, Review Form Dailog, Create & Update Action, Display Reviews, Pre-Fill Review Form
+npx prisma generate
+--If Needed then 2 commands
+taskkill /F /IM node.exe
+rm -r -force node_modules/.prisma
+
+npx prisma migrate dev --name add_review

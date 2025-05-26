@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import MainNav from "./main-nav";
 import AdminSearch from "@/components/admin/admin-search";
+import Footer from "@/components/shared/footer";
 
 export default function AdminLayout({
     children,
@@ -11,13 +12,12 @@ export default function AdminLayout({
     children: React.ReactNode;
   }>) {
     return (
-        <>
-           <div className="flex flex-col min-h-screen">
-            <header className="w-full border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="flex flex-col min-h-screen">
+            <header className="w-full border-b fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-14">
                         <div className="flex items-center gap-6">
-                            <Link href="/admin" className="flex items-center gap-2 group">
+                            <Link href="/" className="flex items-center gap-2 group">
                                 <Image
                                     src="/images/logo.svg"
                                     alt={APP_NAME}
@@ -40,11 +40,11 @@ export default function AdminLayout({
                     </div>
                 </div>
             </header>
-            <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-32">
                 {children}
             </main>
-           </div>
-        </>
+            <Footer />
+        </div>
     );
 }
   
