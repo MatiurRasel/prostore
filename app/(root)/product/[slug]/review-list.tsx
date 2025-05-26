@@ -3,7 +3,7 @@ import { Review } from "@/types";
 import Link from "next/link";
 import {  useState } from "react";
 import ReviewForm from "./review-form";
-import { getReviews, getReviewByProductId } from "@/lib/actions/review.actions";
+import { getReviews } from "@/lib/actions/review.actions";
 import { useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, User } from "lucide-react";
