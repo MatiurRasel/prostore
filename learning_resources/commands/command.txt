@@ -256,3 +256,6 @@ npm i stripe @stripe/stripe-js @stripe/react-stripe-js
 --Session 15
 Resend Account Setup, Receipt Email Template, Preview Email In Browser, Send Email From App
 npm i resend react-email @react-email/components
+
+--Session 16
+Icon Boxes Component, Deal Countdown timer

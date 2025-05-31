@@ -1,9 +1,7 @@
 import {
     Card,
     CardContent,
-    CardDescription,
     CardHeader,
-    CardTitle,
   } from '@/components/ui/card';
   import { Metadata } from 'next';
   import Link from 'next/link';
@@ -31,27 +29,30 @@ import {
     }
   
     return (
-      <div className='w-full max-w-md mx-auto'>
-        <Card>
-          <CardHeader className='space-y-4'>
-            <Link href='/' className='flex-center'>
-              <Image
-                src='/images/logo.svg'
-                width={100}
-                height={100}
-                alt={`${APP_NAME} logo`}
-                priority={true}
-              />
-            </Link>
-            <CardTitle className='text-center'>Sign In</CardTitle>
-            <CardDescription className='text-center'>
-              Sign in to your account
-            </CardDescription>
-          </CardHeader>
-          <CardContent className='space-y-4'>
-            <CredentialsSignInForm />
-          </CardContent>
-        </Card>
+      <div className='min-h-[80vh] flex items-center justify-center p-4'>
+        <div className='w-full max-w-md mx-auto'>
+          <Card className="border-none shadow-lg">
+            <CardHeader className='space-y-6'>
+              <Link 
+                href='/' 
+                className='flex justify-center hover:scale-105 transition-transform duration-300'
+              >
+                <Image
+                  src='/images/logo.svg'
+                  width={64}
+                  height={64}
+                  alt={`${APP_NAME} logo`}
+                  priority={true}
+                  className="drop-shadow-lg"
+                />
+              </Link>
+
+            </CardHeader>
+            <CardContent>
+              <CredentialsSignInForm />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   };
