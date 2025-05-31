@@ -2,8 +2,6 @@ import { updateOrderToPaid } from "@/lib/actions/order.actions";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
 export async function POST(request: NextRequest) {
     //Build the webhook event
     const event =await Stripe.webhooks.constructEventAsync(
