@@ -49,7 +49,7 @@ props: {
                     <div className="space-y-4">
                         <h1 className="text-4xl font-bold tracking-tight">Payment Successful!</h1>
                         <p className="text-lg text-muted-foreground max-w-md">
-                            Thank you for your purchase. We are processing your order and will notify you once it's ready.
+                            Thank you for your purchase. We are processing your order and will notify you once it&apos;s ready.
                         </p>
                     </div>
                     <div className="pt-4">
