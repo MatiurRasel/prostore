@@ -110,9 +110,9 @@ import {
                         alt={item.name}
                         className='rounded'
                         src={
-                          item.image.startsWith('/')
-                            ? `${process.env.NEXT_PUBLIC_SERVER_URL}${item.image}`
-                            : item.image
+                          item.image.startsWith('http')
+                            ? item.image.replace(/\\$/, '')
+                            : `${process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'}${item.image}`
                         }
                       />
                     </Column>
