@@ -228,3 +228,27 @@ taskkill /F /IM node.exe
 rm -r -force node_modules/.prisma
 
 npx prisma migrate dev --name add_review
+
+
+--Session 14
+Stripe Account Setup, Payment Intent, Stripe Form Component, Payment Success Page, WebHook For Payment
+npm i stripe @stripe/stripe-js @stripe/react-stripe-js
+
+--Payment Intent
+  Represents a specific transaction for collecting payment from a customer. 
+  It's an attempt to collect monet containing the info for a payment.
+  track it's status and hand any authentication.
+  
+  -- Overall Steps: 
+  => Create a Payment Intent
+  => Confirm payment to client
+  => check payment status
+  => Handle success/failure
+
+  --Intent Status Updates:
+  => Requires Payment method
+  => Requires Confirmation
+  => Requires Action
+  => Processing
+  => Succeeded
+  => Canceled or Failed
