@@ -1,62 +1,56 @@
-import { DollarSign, Headset, ShoppingBag, WalletCards } from "lucide-react";
-import { Card, CardContent } from "./ui/card";
+'use client';
+
+import { MotionDiv } from '@/components/ui/motion';
+import { Truck, Shield, CreditCard, RefreshCw } from 'lucide-react';
 
 const IconBoxes = () => {
-    return ( 
-        <div className="my-8">
-           <Card className="border-none shadow-lg">
-            <CardContent className="grid md:grid-cols-4 gap-8 p-8">
-                <div className="space-y-3 text-center group hover:scale-105 transition-transform duration-300">
-                    <div className="flex justify-center">
-                        <ShoppingBag className="w-8 h-8 text-primary group-hover:scale-110 transition-transform duration-300"/>
-                    </div>
-                    <div className="text-base font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                        Free Shipping
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Free shipping on orders over $100
-                    </p>
-                </div>
+    const features = [
+        {
+            icon: <Truck className="h-6 w-6" />,
+            title: 'Free Shipping',
+            description: 'Free shipping on all orders over $50'
+        },
+        {
+            icon: <Shield className="h-6 w-6" />,
+            title: 'Secure Payment',
+            description: 'We ensure secure payment with SSL'
+        },
+        {
+            icon: <CreditCard className="h-6 w-6" />,
+            title: 'Money Back',
+            description: '30 days money back guarantee'
+        },
+        {
+            icon: <RefreshCw className="h-6 w-6" />,
+            title: 'Easy Returns',
+            description: 'Simple and hassle-free returns'
+        }
+    ];
 
-                <div className="space-y-3 text-center group hover:scale-105 transition-transform duration-300">
-                    <div className="flex justify-center">
-                        <DollarSign className="w-8 h-8 text-primary group-hover:scale-110 transition-transform duration-300"/>
-                    </div>
-                    <div className="text-base font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                        Money Back Guarantee
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Within 30 days of purchase
-                    </p>
+    return (
+        <section className="py-12 bg-muted/50">
+            <div className="container mx-auto px-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {features.map((feature, index) => (
+                        <MotionDiv
+                            key={feature.title}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            whileHover={{ scale: 1.05 }}
+                            className="flex flex-col items-center text-center p-6 bg-card rounded-lg shadow-sm hover:shadow-md transition-all duration-300"
+                        >
+                            <div className="mb-4 text-primary">
+                                {feature.icon}
+                            </div>
+                            <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                            <p className="text-sm text-muted-foreground">{feature.description}</p>
+                        </MotionDiv>
+                    ))}
                 </div>
+            </div>
+        </section>
+    );
+};
 
-                <div className="space-y-3 text-center group hover:scale-105 transition-transform duration-300">
-                    <div className="flex justify-center">
-                        <WalletCards className="w-8 h-8 text-primary group-hover:scale-110 transition-transform duration-300"/>
-                    </div>
-                    <div className="text-base font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                        Flexible Payment
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Pay with credit card, PayPal, or COD
-                    </p>
-                </div>
-
-                <div className="space-y-3 text-center group hover:scale-105 transition-transform duration-300">
-                    <div className="flex justify-center">
-                        <Headset className="w-8 h-8 text-primary group-hover:scale-110 transition-transform duration-300"/>
-                    </div>
-                    <div className="text-base font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                        24/7 Support
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                        Contact us 24/7 for any questions
-                    </p>
-                </div>
-            </CardContent>
-           </Card>
-        </div>
-     );
-}
- 
 export default IconBoxes;

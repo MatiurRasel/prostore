@@ -8,14 +8,16 @@ import DealCountdown from "@/components/deal-countdown";
 const Homepage = async () => {
   const latestProducts = await getLatestProducts();
   const featuredProducts = await getFeaturedProducts();
-  //console.log(featuredProducts);
+  // Ensure only plain objects are passed to Client Components
+  const plainLatestProducts = JSON.parse(JSON.stringify(latestProducts));
+  const plainFeaturedProducts = JSON.parse(JSON.stringify(featuredProducts));
   return ( 
   <>
-    {featuredProducts.length > 0 && 
-      <ProductCarousel data={featuredProducts} />
+    {plainFeaturedProducts.length > 0 && 
+      <ProductCarousel data={plainFeaturedProducts} />
     }
     <ProductList 
-      data={latestProducts} 
+      data={plainLatestProducts} 
       title={'Newest Arrivals'}
       limit={4}>
     </ProductList> 

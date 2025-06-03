@@ -259,3 +259,7 @@ npm i resend react-email @react-email/components
 
 --Session 16
 Icon Boxes Component, Deal Countdown timer
+
+
+--Improvements 
+npx shadcn-ui@latest add scroll-area
