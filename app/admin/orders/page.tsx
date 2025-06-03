@@ -7,6 +7,9 @@ import { deleteOrder, getAllOrders } from "@/lib/actions/order.actions";
 import { formatCurrency, formatDateTime, formatId } from "@/lib/utils";
 import { Metadata } from "next";
 import Link from "next/link";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { MotionDiv } from "@/components/ui/motion";
+import { ArrowRight, Trash2 } from "lucide-react";
 
 export const metadata: Metadata = {
     title: 'Admin Orders'
@@ -15,84 +18,161 @@ export const metadata: Metadata = {
 const AdminOrderPage = async (props: {
     searchParams: Promise<{page: string; query: string}>
 }) => {
-    
-    const {page = '1',query: searchText} = await props.searchParams;
-
+    const {page = '1', query: searchText} = await props.searchParams;
     const session = await auth();
 
     if(session?.user?.role !=='admin') {
         throw new Error('User is not authorized')
     }
 
-    const orders= await getAllOrders({
+    const orders = await getAllOrders({
         page: Number(page),
         query: searchText
     });
 
     return ( 
-                <div className="space-y-2">
-             <div className="flex items-center gap-3">
-                    <h1 className="h2-bold">Orders</h1>
-                    {searchText && (
-                        <div>
-                            Filtered by: <i>&quot;{searchText}&quot;</i> {' '}
-                            <Link href="/admin/orders">
-                                <Button variant='outline' size='sm'>
-                                    Remove Filter
-                                </Button>
-                            </Link>
-                        </div>
-                    )}
-                </div>
-            <div className="overflow-x-auto">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>DATE</TableHead>
-                            <TableHead>BUYER</TableHead>
-                            <TableHead>TOTAL</TableHead>
-                            <TableHead>PAID</TableHead>
-                            <TableHead>DELIVERED</TableHead>
-                            <TableHead>ACTIONS</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {orders.data?.map((order)=> (
-                            <TableRow key={order.id}>
-                                <TableCell>{formatId(order.id)}</TableCell>
-                                <TableCell>{formatDateTime(order.createdAt).dateTime}</TableCell>
-                                <TableCell>{order.user.name}</TableCell>
-                                <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
-                                <TableCell>{order.isPaid && order.paidAt ?
-                                formatDateTime(order.paidAt).dateTime : "Not Paid" }</TableCell>
-                                <TableCell>{order.isDelivered && order.deliveredAt ?
-                                formatDateTime(order.deliveredAt).dateTime : "Not Delivered" }</TableCell>
-                                <TableCell>
-                                    <Button asChild variant='outline' size='sm'>
-                                        <Link href={`/order/${order.id}`}>
-                                             Details
-                                        </Link>
-                                    </Button>
-                                    <DeleteDialog 
-                                        id={order.id}
-                                        action={deleteOrder}/>
-                                </TableCell>
-                            </TableRow>
+        <div className="space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
+            <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="h2-bold">Orders</h1>
+                {searchText && (
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm text-muted-foreground">
+                            Filtered by: <i>&quot;{searchText}&quot;</i>
+                        </span>
+                        <Link href="/admin/orders">
+                            <Button variant='outline' size='sm'>
+                                Remove Filter
+                            </Button>
+                        </Link>
+                    </div>
+                )}
+            </div>
 
-                        ))}
-                    </TableBody>
-                </Table>
-                {typeof orders?.totalPages === 'number' && orders.totalPages > 1 && (
+            {/* Desktop Table */}
+            <div className="hidden md:block">
+                <div className="rounded-lg border shadow-sm">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="min-w-[100px]">ID</TableHead>
+                                <TableHead className="min-w-[180px]">DATE</TableHead>
+                                <TableHead className="min-w-[150px]">BUYER</TableHead>
+                                <TableHead className="min-w-[120px]">TOTAL</TableHead>
+                                <TableHead className="min-w-[180px]">PAID</TableHead>
+                                <TableHead className="min-w-[180px]">DELIVERED</TableHead>
+                                <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {orders.data?.map((order) => (
+                                <TableRow key={order.id} className="hover:bg-muted/50">
+                                    <TableCell className="font-medium">{formatId(order.id)}</TableCell>
+                                    <TableCell className="whitespace-nowrap">{formatDateTime(order.createdAt).dateTime}</TableCell>
+                                    <TableCell className="font-medium">{order.user.name}</TableCell>
+                                    <TableCell className="font-medium">{formatCurrency(order.totalPrice)}</TableCell>
+                                    <TableCell className="whitespace-nowrap">
+                                        {order.isPaid && order.paidAt ? 
+                                            formatDateTime(order.paidAt).dateTime : 
+                                            <span className="text-destructive">Not Paid</span>
+                                        }
+                                    </TableCell>
+                                    <TableCell className="whitespace-nowrap">
+                                        {order.isDelivered && order.deliveredAt ? 
+                                            formatDateTime(order.deliveredAt).dateTime : 
+                                            <span className="text-destructive">Not Delivered</span>
+                                        }
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button asChild variant='secondary' size='sm' className="gap-1">
+                                                <Link href={`/order/${order.id}`}>
+                                                    <ArrowRight className="w-4 h-4" /> Details
+                                                </Link>
+                                            </Button>
+                                            <DeleteDialog id={order.id} action={deleteOrder}>
+                                                <Trash2 className="w-4 h-4" /> Delete
+                                            </DeleteDialog>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="flex flex-col gap-4 md:hidden">
+                {orders.data?.map((order, i) => (
+                    <MotionDiv
+                        key={order.id}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: i * 0.05 }}
+                    >
+                        <Card className="shadow-md border border-muted bg-background/90">
+                            <CardContent className="py-4 px-4 flex flex-col gap-2">
+                                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                                    <span className="font-semibold">Order ID</span>
+                                    <span>{formatId(order.id)}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="font-semibold">Date</span>
+                                    <span>{formatDateTime(order.createdAt).dateTime}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="font-semibold">Buyer</span>
+                                    <span className="font-medium">{order.user.name}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="font-semibold">Total</span>
+                                    <span className="font-medium">{formatCurrency(order.totalPrice)}</span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="font-semibold">Paid</span>
+                                    <span>
+                                        {order.isPaid && order.paidAt ? 
+                                            formatDateTime(order.paidAt).dateTime : 
+                                            <span className="text-destructive">Not Paid</span>
+                                        }
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="font-semibold">Delivered</span>
+                                    <span>
+                                        {order.isDelivered && order.deliveredAt ? 
+                                            formatDateTime(order.deliveredAt).dateTime : 
+                                            <span className="text-destructive">Not Delivered</span>
+                                        }
+                                    </span>
+                                </div>
+                            </CardContent>
+                            <CardFooter className="flex justify-end gap-2 px-4 pb-4 pt-0">
+                                <Button asChild size="sm" className="gap-1">
+                                    <Link href={`/order/${order.id}`}>
+                                        <ArrowRight className="w-4 h-4" /> Details
+                                    </Link>
+                                </Button>
+                                <DeleteDialog id={order.id} action={deleteOrder}>
+                                    <Trash2 className="w-4 h-4" /> Delete
+                                </DeleteDialog>
+                            </CardFooter>
+                        </Card>
+                    </MotionDiv>
+                ))}
+            </div>
+
+            {/* Pagination */}
+            {typeof orders?.totalPages === 'number' && orders.totalPages > 1 && (
+                <div className="flex justify-center mt-4">
                     <Pagination
                         page={Number(page) || 1}
                         totalPages={orders.totalPages}
                     />
-                )}
-
-            </div>
+                </div>
+            )}
         </div>
-     );
+    );
 }
  
 export default AdminOrderPage;

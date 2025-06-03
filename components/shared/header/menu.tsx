@@ -1,25 +1,32 @@
 import { Button } from "@/components/ui/button";
 import ModeToggle from "./mode-toggle";
 import Link from "next/link";
-import { EllipsisVertical, ShoppingBag, User, Heart } from "lucide-react";
+import { EllipsisVertical, ShoppingBag, User, ClipboardList } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import UserButton from "./user-button";
-import { MotionButton, MotionDiv } from '@/components/ui/motion';
+import { MotionDiv } from '@/components/ui/motion';
+//import { auth } from "@/auth";
 
 const menuItems = [
-    {
-        icon: ShoppingBag,
-        label: "Cart",
-        href: "/cart"
-    },
     {
         icon: User,
         label: "Profile",
         href: "/user/profile"
     },
+    {
+        icon: ClipboardList,
+        label: "Orders",
+        href: "/user/orders"
+    },
+    {
+        icon: ShoppingBag,
+        label: "Cart",
+        href: "/cart"
+    },
 ];
 
-const Menu = () => {
+const Menu = async () => {
+    //const session = await auth();
     return (
         <div className="flex items-center gap-2">
             {/* Desktop Navigation */}
@@ -86,62 +93,7 @@ const Menu = () => {
                     </SheetContent>
                 </Sheet>
             </nav>
-            {/* Quick Actions (icon-only, with tooltips) */}
-            <ul className="flex items-center gap-2 ml-2">
-                <li>
-                    <div className="group relative flex items-center">
-                        <Button variant="ghost" size="icon" className="relative">
-                            <User className="h-5 w-5" />
-                        </Button>
-                        <span className="absolute left-1/2 -bottom-7 -translate-x-1/2 scale-0 group-hover:scale-100 transition bg-black text-white text-xs rounded px-2 py-1 pointer-events-none">Profile</span>
-                    </div>
-                </li>
-                <li>
-                    <div className="group relative flex items-center">
-                        <Button variant="ghost" size="icon" className="relative">
-                            <Heart className="h-5 w-5" />
-                        </Button>
-                        <span className="absolute left-1/2 -bottom-7 -translate-x-1/2 scale-0 group-hover:scale-100 transition bg-black text-white text-xs rounded px-2 py-1 pointer-events-none">Wishlist</span>
-                    </div>
-                </li>
-                <li>
-                    <div className="group relative flex items-center">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <MotionButton
-                                    className="relative"
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <ShoppingBag className="h-5 w-5" />
-                                    <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                        0
-                                    </span>
-                                </MotionButton>
-                            </SheetTrigger>
-                            <SheetContent side="right" className="w-full sm:max-w-lg">
-                                <SheetTitle className="text-lg font-semibold mb-4">Shopping Cart</SheetTitle>
-                                <div className="flex flex-col h-full">
-                                    <div className="flex-1 py-6">
-                                        <div className="space-y-4">
-                                            {/* Cart items will go here */}
-                                            <p className="text-muted-foreground text-center py-8">Your cart is empty</p>
-                                        </div>
-                                    </div>
-                                    <div className="border-t p-4">
-                                        <div className="flex justify-between mb-4">
-                                            <span className="font-medium">Total</span>
-                                            <span className="font-semibold">$0.00</span>
-                                        </div>
-                                        <Button className="w-full">Checkout</Button>
-                                    </div>
-                                </div>
-                            </SheetContent>
-                        </Sheet>
-                        <span className="absolute left-1/2 -bottom-7 -translate-x-1/2 scale-0 group-hover:scale-100 transition bg-black text-white text-xs rounded px-2 py-1 pointer-events-none">Cart</span>
-                    </div>
-                </li>
-            </ul>
+
         </div>
     );
 };

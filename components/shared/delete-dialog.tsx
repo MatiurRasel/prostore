@@ -5,9 +5,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "../ui/button";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog";
 
-const DeleteDialog = ({id, action}: {
+const DeleteDialog = ({id, action, children}: {
     id: string;
-    action: (id: string) => Promise<{success: boolean; message: string;}>
+    action: (id: string) => Promise<{success: boolean; message: string;}>;
+    children?: React.ReactNode;
 }) => {
     const[open, setOpen] = useState(false);
     const[isPending, startTransition] = useTransition();
@@ -34,8 +35,8 @@ const DeleteDialog = ({id, action}: {
     return ( 
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
-                <Button size='sm' variant='destructive' className="ml-2">
-                    Delete
+                <Button size='sm' variant='destructive' className="gap-1">
+                    {children || 'Delete'}
                 </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
