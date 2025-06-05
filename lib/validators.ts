@@ -141,3 +141,10 @@ export const insertReviewSchema = z.object({
       .min(1, 'Rating must be at least 1')
       .max(5, 'Rating must be at most 5'),
 });
+
+export const placeOrderSchema = z.object({
+    itemsPrice: z.number(),
+    shippingPrice: z.number(),
+    taxPrice: z.number(),
+    totalPrice: z.number(),
+});

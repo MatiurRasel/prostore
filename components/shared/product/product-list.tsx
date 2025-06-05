@@ -5,31 +5,47 @@ import { Product } from "@/types";
 import { addItemsToCart } from "@/lib/actions/cart.actions";
 import { useTransition } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from '@/components/ui/toast';
+import { useRouter } from 'next/navigation';
 
-const ProductList = ({data,title,limit} : {
-        data: Product[]; 
-        title?:string; 
-        limit?: number; 
-    }) => {
-    const limitedData = limit ? data.slice(0,limit) : data;
+const ProductList = ({data, title, limit} : {
+    data: Product[]; 
+    title?: string; 
+    limit?: number; 
+}) => {
+    const limitedData = limit ? data.slice(0, limit) : data;
     const { toast } = useToast();
     const [, startTransition] = useTransition();
+    const router = useRouter();
 
     const handleAddToCart = (product: Product) => {
         startTransition(async () => {
-            // Only pass plain fields
-            const res = await addItemsToCart({
-                productId: product.id,
-                name: product.name,
-                slug: product.slug,
-                price: product.price,
-                qty: 1,
-                image: product.images?.[0] || ""
-            });
-            if (res.success) {
-                toast({ description: res.message });
-            } else {
-                toast({ description: res.message, variant: "destructive" });
+            try {
+                const res = await addItemsToCart({
+                    productId: product.id,
+                    name: product.name,
+                    slug: product.slug,
+                    price: product.price,
+                    qty: 1,
+                    image: product.images?.[0] || ""
+                });
+                if (res.success) {
+                    toast({
+                        description: 'Added to cart successfully',
+                        action: (
+                            <ToastAction
+                                className="bg-primary text-white hover:bg-gray-800"
+                                altText="Go To Cart"
+                                onClick={() => router.push('/cart')}
+                            >
+                                Go To Cart
+                            </ToastAction>
+                        )
+                    });
+                } else {
+                    toast({ description: res.message, variant: "destructive" });
+                }
+            } finally {
             }
         });
     };
@@ -58,7 +74,7 @@ const ProductList = ({data,title,limit} : {
                             createdAt: product.createdAt
                         }));
                         return (
-                            <ProductCard key={plainProduct.slug} product={plainProduct} onAddToCart={handleAddToCart}/>
+                            <ProductCard key={plainProduct.slug} product={plainProduct} onAddToCart={() => handleAddToCart(plainProduct)}/>
                         );
                     })}
                 </div>

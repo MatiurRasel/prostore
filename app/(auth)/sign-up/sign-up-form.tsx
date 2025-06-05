@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signUpDefaultValues } from '@/lib/constants';
@@ -11,6 +10,7 @@ import { signUpUser } from '@/lib/actions/user.actions';
 import { useSearchParams } from 'next/navigation';
 import { AtSign, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import LoadingButton from '@/components/ui/loading-button';
 
 const SignUpForm = () => {
   const [data, action] = useActionState(signUpUser, {
@@ -46,14 +46,16 @@ const SignUpForm = () => {
   const SignUpButton = () => {
     const { pending } = useFormStatus();
     return (
-      <Button 
-        disabled={pending} 
+      <LoadingButton 
+        type="submit"
+        isLoading={pending}
+        loadingText="Creating Account..."
         className="w-full rounded-full transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70" 
         variant="default"
         size="lg"
       >
-        {pending ? 'Creating Account...' : 'Create Account'}
-      </Button>
+        Sign Up
+      </LoadingButton>
     );
   };
 

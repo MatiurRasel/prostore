@@ -272,3 +272,30 @@ export function formUrlQuery({
 export function capitalize(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+export const calculateOrderPrices = (cart: unknown) => {
+  if (
+      !cart ||
+      typeof cart !== 'object' ||
+      !('items' in cart) ||
+      !Array.isArray((cart as unknown as { items: { price: number; qty: number }[] }).items)
+  ) {
+      return {
+          itemsPrice: 0,
+          shippingPrice: 0,
+          taxPrice: 0,
+          totalPrice: 0
+      };
+  }
+  const items = (cart as { items: { price: number; qty: number }[] }).items;
+  const itemsPrice = items.reduce((acc, item) => acc + Number(item.price) * Number(item.qty), 0) || 0;
+  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const taxPrice = Number((0.15 * itemsPrice).toFixed(2));
+  const totalPrice = Number((itemsPrice + shippingPrice + taxPrice).toFixed(2));
+
+  return {
+      itemsPrice,
+      shippingPrice,
+      taxPrice,
+      totalPrice
+  };
+};

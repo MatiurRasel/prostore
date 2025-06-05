@@ -263,3 +263,4 @@ Icon Boxes Component, Deal Countdown timer
 
 --Improvements 
 npx shadcn-ui@latest add scroll-area
+npm install @radix-ui/react-separator

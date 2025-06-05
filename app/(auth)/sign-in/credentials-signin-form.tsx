@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signInDefaultValues } from '@/lib/constants';
@@ -11,6 +10,7 @@ import { signInWithCredentials } from '@/lib/actions/user.actions';
 import { useSearchParams } from 'next/navigation';
 import { AtSign, Lock, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import LoadingButton from '@/components/ui/loading-button';
 
 const CredentialsSignInForm = () => {
   const [data, action] = useActionState(signInWithCredentials, {
@@ -29,14 +29,16 @@ const CredentialsSignInForm = () => {
   const SignInButton = () => {
     const { pending } = useFormStatus();
     return (
-      <Button 
-        disabled={pending} 
+      <LoadingButton 
+        type="submit"
+        isLoading={pending}
+        loadingText="Signing In..."
         className="w-full rounded-full transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70" 
         variant="default"
         size="lg"
       >
-        {pending ? 'Signing In...' : 'Sign In'}
-      </Button>
+        Sign In
+      </LoadingButton>
     );
   };
 

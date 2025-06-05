@@ -1,52 +1,31 @@
-'use client';
+import { Loader2 } from "lucide-react";
+import Image from "next/image";
 
-const LoadingPage = () => {
-    return (
-        <>
-            <style jsx global>{`
-                @keyframes pulse_6784 {
-                    0%, 80%, 100% {
-                        transform: scale(0.8);
-                        opacity: 0.7;
-                    }
-                    40% {
-                        transform: scale(1);
-                        opacity: 1;
-                    }
-                }
-                .dot-pulse_6784 {
-                    animation: pulse_6784 1.4s infinite ease-in-out both;
-                    width: 20px;
-                    height: 20px;
-                    border-radius: 50%;
-                    margin: 0 6px;
-                }
-                .dot-pulse_6784:nth-child(1) {
-                    background-color: #60A5FA;
-                    animation-delay: -0.32s;
-                }
-                .dot-pulse_6784:nth-child(2) {
-                    background-color: #34D399;
-                    animation-delay: -0.16s;
-                }
-                .dot-pulse_6784:nth-child(3) {
-                    background-color: #A78BFA;
-                }
-            `}</style>
-            <div style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                width: '100vw',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)' /* Optional: slight overlay */
-            }}>
-                <div className="dot-pulse_6784"></div>
-                <div className="dot-pulse_6784"></div>
-                <div className="dot-pulse_6784"></div>
-            </div>
-        </>
-    );
-}
- 
-export default LoadingPage;
+const MainLoading = () => {
+  return (
+    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50">
+      <div className="fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
+        <div className="flex flex-col items-center gap-4">
+          {/* Logo */}
+          <div className="relative w-32 h-32">
+            <Image
+              src="/images/logo.png"
+              alt="Logo"
+              fill
+              className="object-contain"
+              priority
+            />
+          </div>
+          
+          {/* Spinner */}
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            <span className="text-lg font-medium">Loading...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MainLoading;

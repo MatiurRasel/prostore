@@ -5,6 +5,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { SlidersHorizontal } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { MotionButton, MotionDiv } from '@/components/ui/motion';
+import { useTransition } from "react";
+import { Loader } from "@/components/ui/loader";
 
 interface Category {
     category: string;
@@ -34,6 +36,7 @@ export function FilterSheet({
 }: FilterSheetProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [isPending, startTransition] = useTransition();
 
     const getFilterUrl = (params: { c?: string; p?: string; r?: string }) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -46,7 +49,9 @@ export function FilterSheet({
     };
 
     const handleFilterClick = (url: string) => {
-        router.push(url);
+        startTransition(() => {
+            router.push(url);
+        });
     };
 
     const FilterButton = ({ 
@@ -174,7 +179,16 @@ export function FilterSheet({
                         </div>
                     </div>
                     <div className="border-t p-4">
-                        <Button className="w-full">Apply Filters</Button>
+                        <Button 
+                            className="w-full" 
+                            disabled={isPending}
+                            onClick={() => handleFilterClick(getFilterUrl({}))}
+                        >
+                            {isPending ? (
+                                <Loader size="sm" className="text-primary" />
+                            ) : null}
+                            Apply Filters
+                        </Button>
                     </div>
                 </MotionDiv>
             </SheetContent>
