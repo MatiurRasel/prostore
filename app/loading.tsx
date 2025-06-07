@@ -9,10 +9,10 @@ const MainLoading = () => {
           {/* Logo */}
           <div className="relative w-32 h-32">
             <Image
-              src="/images/logo.png"
+              src="/images/logo.svg"
               alt="Logo"
               fill
-              className="object-contain"
+              className="object-contain animate-pulse"
               priority
             />
           </div>

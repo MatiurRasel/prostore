@@ -21,7 +21,6 @@ interface SearchClientProps {
   products: Product[];
   categories: { category: string }[];
   totalPages: number;
-  getFilterUrl: (args: { c?: string; p?: string; s?: string; r?: string; pg?: string }) => string;
   sortOrders: string[];
   prices: { name: string; value: string }[];
   ratings: number[];
@@ -37,13 +36,36 @@ const SearchClient = ({
   products,
   categories,
   totalPages,
-  getFilterUrl,
   sortOrders,
   prices,
   ratings,
 }: SearchClientProps) => {
   const { toast } = useToast();
   const router = useRouter();
+
+  const getFilterUrl = ({
+    c,
+    p,
+    s,
+    r,
+    pg
+  }: {
+    c?: string;
+    p?: string;
+    s?: string;
+    r?: string;
+    pg?: string;
+  }) => {
+    const params = { q, category, price, rating, sort, page };
+
+    if (c) params.category = c;
+    if (s) params.sort = s;
+    if (p) params.price = p;
+    if (r) params.rating = r;
+    if (pg) params.page = pg;
+
+    return `/search?${new URLSearchParams(params).toString()}`;
+  };
 
   const handleAddToCart = () => {
     toast({
@@ -251,41 +273,38 @@ const SearchClient = ({
               </div>
             ) : (
               products.map((product) => (
-                <ProductCard key={product.id} product={product} onAddToCart={() => handleAddToCart()} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                />
               ))
             )}
           </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex justify-center mt-8">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  asChild
-                  disabled={Number(page) <= 1}
-                  className="h-9 w-9"
-                >
-                  <Link href={getFilterUrl({ pg: (Number(page) - 1).toString() })}>
-                    <ChevronLeft className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <span className="text-sm font-medium">
-                  Page {page} of {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  asChild
-                  disabled={Number(page) >= totalPages}
-                  className="h-9 w-9"
-                >
-                  <Link href={getFilterUrl({ pg: (Number(page) + 1).toString() })}>
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+            <div className="flex justify-center mt-8 gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                asChild
+                disabled={Number(page) <= 1}
+              >
+                <Link href={getFilterUrl({ pg: (Number(page) - 1).toString() })}>
+                  <ChevronLeft className="h-4 w-4" />
+                </Link>
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                asChild
+                disabled={Number(page) >= totalPages}
+              >
+                <Link href={getFilterUrl({ pg: (Number(page) + 1).toString() })}>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           )}
         </div>

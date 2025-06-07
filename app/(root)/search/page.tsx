@@ -100,28 +100,6 @@ const SearchPage = async(props:{
         page='1'
     } = await props.searchParams;
 
-    //construct the filter url
-    const getFilterUrl = ({
-        c,p,s,r,pg
-    }: {
-        c?: string;
-        p?: string;
-        s?: string;
-        r?: string;
-        pg?: string;
-    }) => {
-        const params = {q,category,price,rating,sort,page};
-
-        if(c) params.category = c;
-        if(s) params.sort = s;
-        if(p) params.price = p;
-        if(r) params.rating = r;
-        if(pg) params.page = pg;
-
-        return `/search?${new URLSearchParams(params).toString()}`;
-        
-    }
-    
     const products = await getAllProducts({
         query: q,
         category,
@@ -152,7 +130,6 @@ const SearchPage = async(props:{
                 products={plainProducts}
                 categories={serializedCategories}
                 totalPages={products.totalPages}
-                getFilterUrl={getFilterUrl}
                 sortOrders={sortOrders}
                 prices={prices}
                 ratings={ratings}

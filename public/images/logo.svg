@@ -1,23 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Creator: CorelDRAW X5 -->
-<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="2048px" height="2048px" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
-viewBox="0 0 2048 2048"
- xmlns:xlink="http://www.w3.org/1999/xlink">
- <defs>
-  <style type="text/css">
-   <![CDATA[
-    .fil0 {fill:#FFCA28}
-    .fil1 {fill:#FFFFFE;fill-rule:nonzero}
-   ]]>
-  </style>
- </defs>
- <g id="Layer_x0020_1">
-  <metadata id="CorelCorpID_0Corel-Layer"/>
-  <rect class="fil0" width="2048" height="2048" rx="256" ry="256"/>
-  <g id="_617655424">
-   <path class="fil1" d="M1601 765l28 0 5 28 158 688 0 182 -1536 0 0 -189 159 -682 5 -28 28 0 206 0c-17,64 -28,130 -31,192 -1,28 -4,58 15,81 13,15 31,22 50,22 46,0 65,-33 67,-74 0,-8 0,-16 1,-24 4,-63 17,-132 37,-197l461 0c24,75 38,155 38,228 0,37 30,67 67,67 37,0 67,-30 67,-67 0,-74 -11,-152 -32,-228l209 0z"/>
-   <path class="fil1" d="M688 1032c-39,0 -34,-41 -32,-67 6,-102 35,-232 88,-340 58,-120 146,-215 261,-225 16,-1 30,-1 46,1 90,12 169,85 229,185 69,116 112,272 112,412 0,18 -15,33 -33,33 -18,0 -33,-15 -33,-33 0,-128 -40,-271 -103,-378 -48,-80 -108,-139 -172,-152 -14,-3 -30,-3 -44,-2 -86,9 -154,88 -202,187 -48,99 -76,218 -81,312 -1,25 5,66 -34,66z"/>
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle with Gradient -->
+  <circle cx="30" cy="30" r="28" fill="url(#gradient-bg)" stroke="url(#gradient-stroke)" stroke-width="1"/>
+  
+  <!-- Shopping Bag with Dynamic Design -->
+  <g filter="url(#shadow)">
+    <!-- Bag Body -->
+    <path d="M20 25C20 22.2386 22.2386 20 25 20H35C37.7614 20 40 22.2386 40 25V25C40 27.7614 37.7614 30 35 30H25C22.2386 30 20 27.7614 20 25V25Z" fill="url(#gradient-bag)"/>
+    
+    <!-- Bag Bottom -->
+    <path d="M18 30H42L40 45H20L18 30Z" fill="url(#gradient-bag)"/>
+    
+    <!-- Bag Handles -->
+    <path d="M25 20V18C25 15.2386 27.2386 13 30 13H35C37.7614 13 40 15.2386 40 18V20" stroke="url(#gradient-handle)" stroke-width="1.5" stroke-linecap="round"/>
+    
+    <!-- Shopping Cart Lines -->
+    <path d="M22 35H38" stroke="url(#gradient-line)" stroke-width="1" stroke-linecap="round" stroke-dasharray="2 2"/>
+    <path d="M24 40H36" stroke="url(#gradient-line)" stroke-width="1" stroke-linecap="round" stroke-dasharray="2 2"/>
   </g>
- </g>
-</svg>
+  
+  <!-- Decorative Elements -->
+  <circle cx="30" cy="30" r="26" stroke="url(#gradient-ring)" stroke-width="0.5" stroke-dasharray="2 2"/>
+  <circle cx="30" cy="30" r="24" stroke="url(#gradient-ring)" stroke-width="0.5" stroke-dasharray="1 1"/>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradient-bg" x1="2" y1="2" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#F1F5F9"/>
+    </linearGradient>
+    
+    <linearGradient id="gradient-stroke" x1="2" y1="2" x2="58" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#E2E8F0"/>
+      <stop offset="100%" stop-color="#CBD5E1"/>
+    </linearGradient>
+    
+    <linearGradient id="gradient-bag" x1="18" y1="20" x2="42" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="50%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#1D4ED8"/>
+    </linearGradient>
+    
+    <linearGradient id="gradient-handle" x1="25" y1="13" x2="40" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    
+    <linearGradient id="gradient-line" x1="22" y1="35" x2="38" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#93C5FD"/>
+      <stop offset="100%" stop-color="#60A5FA"/>
+    </linearGradient>
+    
+    <linearGradient id="gradient-ring" x1="4" y1="4" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#BFDBFE"/>
+      <stop offset="100%" stop-color="#93C5FD"/>
+    </linearGradient>
+    
+    <!-- Shadow Filter -->
+    <filter id="shadow" x="16" y="12" width="28" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="2"/>
+      <feGaussianBlur stdDeviation="1"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.145098 0 0 0 0 0.388235 0 0 0 0 0.964706 0 0 0 0.1 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+  </defs>
+</svg> 

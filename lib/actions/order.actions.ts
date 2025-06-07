@@ -50,24 +50,18 @@ export const createOrder = async (values: z.infer<typeof placeOrderSchema>) => {
                 }
             });
 
-            // Create order items
-            for (const item of cart.items) {
-                await tx.orderItem.create({
-                    data: {
-                        order: {
-                            connect: { id: newOrder.id }
-                        },
-                        product: {
-                            connect: { id: item.productId }
-                        },
-                        name: item.name,
-                        slug: item.slug,
-                        image: item.image,
-                        price: item.price,
-                        qty: item.qty,
-                    }
-                });
-            }
+            // Create all order items at once
+            await tx.orderItem.createMany({
+                data: cart.items.map(item => ({
+                    orderId: newOrder.id,
+                    productId: item.productId,
+                    name: item.name,
+                    slug: item.slug,
+                    image: item.image,
+                    price: item.price,
+                    qty: item.qty,
+                }))
+            });
 
             // Clear cart
             await tx.cart.update({

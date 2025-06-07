@@ -4,6 +4,7 @@ import { auth } from '@/auth';
 import { getUserById } from '@/lib/actions/user.actions';
 import PaymentMethodForm from './payment-method-form';
 import CheckoutSteps from "@/components/shared/checkout-steps";
+export const dynamic = "force-dynamic";
 
 type PaymentMethod = {
     type: 'PayPal' | 'Stripe' | 'CashOnDelivery';
