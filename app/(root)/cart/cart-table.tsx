@@ -149,43 +149,49 @@ const CartTable = ({cart}: {cart?: Cart}) => {
                     </Table>
                 </div>
             </div>
-            <Card className="sticky bottom-0 md:static shadow-lg border-muted-foreground/20 bg-white/90 md:bg-white">
-                <CardContent className="p-4 gap-4">
-                <div className="space-y-4 text-black dark:text-white">
-    <div className="flex justify-between items-center">
-        <span className="text-gray-600 dark:text-gray-300">Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)} items)</span>
+            <Card className="sticky bottom-0 md:static shadow-lg border-muted-foreground/20 bg-surface">
+  <CardContent className="p-4 gap-4">
+    <div className="space-y-4 text-primary-content">
+      <div className="flex justify-between items-center">
+        <span className="text-secondary-content">
+          Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)} items)
+        </span>
         <span className="font-medium">{formatCurrency(cart.itemsPrice)}</span>
-    </div>
-    <div className="flex justify-between items-center">
-        <span className="text-gray-600 dark:text-gray-300">Shipping</span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="text-secondary-content">Shipping</span>
         <span className="font-medium">{formatCurrency(cart.shippingPrice)}</span>
-    </div>
-    <div className="flex justify-between items-center">
-        <span className="text-gray-600 dark:text-gray-300">Tax</span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="text-secondary-content">Tax</span>
         <span className="font-medium">{formatCurrency(cart.taxPrice)}</span>
-    </div>
-    <div className="flex justify-between items-center text-lg font-semibold">
+      </div>
+      <div className="flex justify-between items-center text-lg font-semibold">
         <span>Total</span>
         <span>{formatCurrency(cart.totalPrice)}</span>
+      </div>
     </div>
-</div>
 
-                    <Button 
-                    className="w-full mt-4 py-3 text-base rounded-full font-semibold bg-gradient-to-r from-primary to-primary/80 
-                    hover:from-primary/90 hover:to-primary/70 shadow-md text-white dark:text-white" 
-                    disabled={isPending || cart.items.length === 0} onClick={() => 
-                        startTransition(() => {
-                            router.push('/shipping-address');
-                        })}>
-                        {isPending ? (
-                            <Loader className="w-5 h-5 animate-spin mr-2" />
-                        ) : (
-                            <ArrowRight className="w-5 h-5 mr-2" />
-                        )}
-                        Proceed to Checkout
-                    </Button>
-                </CardContent>
-            </Card>
+    <Button
+      className="w-full mt-4 py-3 text-base rounded-full font-semibold bg-gradient-to-r from-primary to-primary/80 
+      hover:from-primary/90 hover:to-primary/70 shadow-md"
+      disabled={isPending || cart.items.length === 0}
+      onClick={() =>
+        startTransition(() => {
+          router.push("/shipping-address");
+        })
+      }
+    >
+      {isPending ? (
+        <Loader className="w-5 h-5 animate-spin mr-2" />
+      ) : (
+        <ArrowRight className="w-5 h-5 mr-2" />
+      )}
+      Proceed to Checkout
+    </Button>
+  </CardContent>
+</Card>
+
         </div>
        )}
     </>
