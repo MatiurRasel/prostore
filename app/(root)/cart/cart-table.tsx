@@ -151,25 +151,29 @@ const CartTable = ({cart}: {cart?: Cart}) => {
             </div>
             <Card className="sticky bottom-0 md:static shadow-lg border-muted-foreground/20 bg-white/90 md:bg-white">
                 <CardContent className="p-4 gap-4">
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <span className="text-muted-foreground">Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)} items)</span>
-                            <span className="font-medium">{formatCurrency(cart.itemsPrice)}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-muted-foreground">Shipping</span>
-                            <span className="font-medium">{formatCurrency(cart.shippingPrice)}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <span className="text-muted-foreground">Tax</span>
-                            <span className="font-medium">{formatCurrency(cart.taxPrice)}</span>
-                        </div>
-                        <div className="flex justify-between items-center text-lg font-semibold">
-                            <span>Total</span>
-                            <span>{formatCurrency(cart.totalPrice)}</span>
-                        </div>
-                    </div>
-                    <Button className="w-full mt-4 py-3 text-base rounded-full font-semibold bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-md" disabled={isPending} onClick={() => 
+                <div className="space-y-4 text-black dark:text-white">
+    <div className="flex justify-between items-center">
+        <span className="text-gray-600 dark:text-gray-300">Subtotal ({cart.items.reduce((a, c) => a + c.qty, 0)} items)</span>
+        <span className="font-medium">{formatCurrency(cart.itemsPrice)}</span>
+    </div>
+    <div className="flex justify-between items-center">
+        <span className="text-gray-600 dark:text-gray-300">Shipping</span>
+        <span className="font-medium">{formatCurrency(cart.shippingPrice)}</span>
+    </div>
+    <div className="flex justify-between items-center">
+        <span className="text-gray-600 dark:text-gray-300">Tax</span>
+        <span className="font-medium">{formatCurrency(cart.taxPrice)}</span>
+    </div>
+    <div className="flex justify-between items-center text-lg font-semibold">
+        <span>Total</span>
+        <span>{formatCurrency(cart.totalPrice)}</span>
+    </div>
+</div>
+
+                    <Button 
+                    className="w-full mt-4 py-3 text-base rounded-full font-semibold bg-gradient-to-r from-primary to-primary/80 
+                    hover:from-primary/90 hover:to-primary/70 shadow-md text-white dark:text-white" 
+                    disabled={isPending || cart.items.length === 0} onClick={() => 
                         startTransition(() => {
                             router.push('/shipping-address');
                         })}>
