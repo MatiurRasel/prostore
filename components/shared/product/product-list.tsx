@@ -34,7 +34,7 @@ const ProductList = ({data, title, limit} : {
                         description: 'Added to cart successfully',
                         action: (
                             <ToastAction
-                                className="bg-primary text-white hover:bg-gray-800"
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90"
                                 altText="Go To Cart"
                                 onClick={() => router.push('/cart')}
                             >
