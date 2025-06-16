@@ -234,7 +234,7 @@ const OrderDetailsTable = ({order, paypalClientId, isAdmin, stripeClientSecret}:
                 </div>
             </div>
             <div>
-                <Card className="sticky bottom-0 md:static shadow-lg border-muted-foreground/20 bg-white/90 md:bg-white">
+                <Card className="sticky bottom-0 md:static shadow-lg border border-border bg-card text-card-foreground">
                     <CardContent className="p-4 gap-4 space-y-4">
                         <div className="flex justify-between">
                                 <div>Items</div>

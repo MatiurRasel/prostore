@@ -18,6 +18,9 @@ import { UploadButton } from "@/lib/uploadthing";
 import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import { Checkbox } from "../ui/checkbox";
+import { useState } from "react";
+import { Loader } from "../ui/loader";
+import LoadingButton from "../ui/loading-button";
 
 type ProductFormProps = {
   type: 'Create' | 'Update';
@@ -37,16 +40,25 @@ const ProductForm = ({
 
     const isUpdate = type === 'Update';
 
+    // Track removed images and banner
+    const [removedImages, setRemovedImages] = useState<string[]>([]);
+    const [removedBanner, setRemovedBanner] = useState<string | null>(null);
+
     const form = useForm<z.infer<typeof updateProductSchema | typeof insertProductSchema>>({
         resolver: zodResolver(isUpdate ? updateProductSchema : insertProductSchema),
         defaultValues: isUpdate && product ? product : productDefaultValues,
     });
 
     const onSubmit: SubmitHandler<z.infer<typeof updateProductSchema | typeof insertProductSchema>> = async (values) => {
-        
+        // Attach removed images/banner to values for backend deletion
+        const payload = {
+            ...values,
+            removedImages,
+            removedBanner: removedBanner || undefined,
+        };
         //On Create
         if(type === 'Create'){
-            const res = await createProduct(values);
+            const res = await createProduct(payload);
 
             if(!res.success){
                 toast({
@@ -70,7 +82,7 @@ const ProductForm = ({
                 return;
             }
 
-            const res = await updateProduct({...values, id: productId});
+            const res = await updateProduct({...payload, id: productId});
 
             if(!res.success){
                 toast({
@@ -211,10 +223,29 @@ const ProductForm = ({
                             <Card>
                                 <CardContent className="space-y-2 mt-2 min-h-48">
                                     <div className="flex-start space-x-2">
-                                        {images.map((image: string) => (
-                                            <Image key={image} src={image} alt="Product Image" 
-                                            className="w-20 h-20 rounded-sm object-cover object-center"
-                                            width={100} height={100}/>
+                                        {images.map((image: string, idx: number) => (
+                                            <div key={image} className="relative w-20 h-20">
+                                                <Image
+                                                    src={image}
+                                                    alt="Product Image"
+                                                    className="w-20 h-20 rounded-sm object-cover object-center"
+                                                    width={100}
+                                                    height={100}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                                                    onClick={() => {
+                                                        const newImages = [...images];
+                                                        newImages.splice(idx, 1);
+                                                        form.setValue('images', newImages);
+                                                        setRemovedImages((prev) => [...prev, image]);
+                                                    }}
+                                                    aria-label="Remove image"
+                                                >
+                                                    ×
+                                                </button>
+                                            </div>
                                         ))}
                                         <FormControl>
                                             <UploadButton
@@ -258,7 +289,26 @@ const ProductForm = ({
                             )}
                         />
                         {isFeatured && banner && (
-                            <Image src={banner} alt="banner image" className="w-full object-cover object-center rounded-sm" width={1920} height={680}/>
+                            <div className="relative w-full">
+                                <Image
+                                    src={banner}
+                                    alt="banner image"
+                                    className="w-full object-cover object-center rounded-sm"
+                                    width={1920}
+                                    height={680}
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
+                                    onClick={() => {
+                                        setRemovedBanner(banner);
+                                        form.setValue('banner', '');
+                                    }}
+                                    aria-label="Remove banner"
+                                >
+                                    ×
+                                </button>
+                            </div>
                         )}
                         {isFeatured && !banner && (
                             <UploadButton
@@ -297,13 +347,15 @@ const ProductForm = ({
             </div>
             <div>
                 {/* Submit */}
-                <Button 
+                <LoadingButton
                     type="submit"
-                    size='lg'
-                    disabled={form.formState.isSubmitting}
-                    className="button col-span-2 w-full">
-                    {form.formState.isSubmitting ? 'Submitting...' : `${type} Product`}
-                </Button>
+                    size="lg"
+                    isLoading={form.formState.isSubmitting}
+                    loadingText="Submitting..."
+                    className="button col-span-2 w-full"
+                >
+                    {`${type} Product`}
+                </LoadingButton>
             </div>
         </form>
     

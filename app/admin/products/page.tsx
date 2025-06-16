@@ -54,43 +54,45 @@ const AdminProductPage = async(props: {
             {/* Desktop Table */}
             <div className="hidden md:block">
                 <div className="rounded-lg border shadow-sm">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="min-w-[100px]">ID</TableHead>
-                                <TableHead className="min-w-[200px]">NAME</TableHead>
-                                <TableHead className="min-w-[120px] text-right">PRICE</TableHead>
-                                <TableHead className="min-w-[120px]">CATEGORY</TableHead>
-                                <TableHead className="min-w-[100px]">STOCK</TableHead>
-                                <TableHead className="min-w-[100px]">RATING</TableHead>
-                                <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {products.data.map((product) => (
-                                <TableRow key={product.id} className="hover:bg-muted/50">
-                                    <TableCell className="font-medium">{formatId(product.id)}</TableCell>
-                                    <TableCell className="font-medium">{product.name}</TableCell>
-                                    <TableCell className="text-right font-medium">{formatCurrency(product.price)}</TableCell>
-                                    <TableCell className="capitalize">{product.category}</TableCell>
-                                    <TableCell>{product.stock}</TableCell>
-                                    <TableCell>{product.rating}</TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button asChild variant='secondary' size='sm' className="gap-1">
-                                                <Link href={`/admin/products/${product.id}`}>
-                                                    <Edit className="w-4 h-4" /> Edit
-                                                </Link>
-                                            </Button>
-                                            <DeleteDialog id={product.id} action={deleteProduct}>
-                                                <Trash2 className="w-4 h-4" /> Delete
-                                            </DeleteDialog>
-                                        </div>
-                                    </TableCell>
+                    <div className="max-h-[384px] min-h-[192px] overflow-y-auto">
+                        <Table className="table-fixed w-full">
+                            <TableHeader className="sticky top-0 bg-card z-10">
+                                <TableRow>
+                                    <TableHead className="min-w-[100px]">ID</TableHead>
+                                    <TableHead className="min-w-[200px]">NAME</TableHead>
+                                    <TableHead className="min-w-[120px] text-right">PRICE</TableHead>
+                                    <TableHead className="min-w-[120px]">CATEGORY</TableHead>
+                                    <TableHead className="min-w-[100px]">STOCK</TableHead>
+                                    <TableHead className="min-w-[100px]">RATING</TableHead>
+                                    <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {products.data.map((product) => (
+                                    <TableRow key={product.id} className="hover:bg-muted/50">
+                                        <TableCell className="font-medium">{formatId(product.id)}</TableCell>
+                                        <TableCell className="font-medium">{product.name}</TableCell>
+                                        <TableCell className="text-right font-medium">{formatCurrency(product.price)}</TableCell>
+                                        <TableCell className="capitalize">{product.category}</TableCell>
+                                        <TableCell>{product.stock}</TableCell>
+                                        <TableCell>{product.rating}</TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Button asChild variant='secondary' size='sm' className="gap-1">
+                                                    <Link href={`/admin/products/${product.id}`}>
+                                                        <Edit className="w-4 h-4" /> Edit
+                                                    </Link>
+                                                </Button>
+                                                <DeleteDialog id={product.id} action={deleteProduct}>
+                                                    <Trash2 className="w-4 h-4" /> Delete
+                                                </DeleteDialog>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </div>
             </div>
 

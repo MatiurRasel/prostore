@@ -45,49 +45,51 @@ const AdminUserPage = async(props: {
             {/* Desktop Table */}
             <div className="hidden md:block">
                 <div className="rounded-lg border shadow-sm">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead className="min-w-[100px]">ID</TableHead>
-                                <TableHead className="min-w-[200px]">NAME</TableHead>
-                                <TableHead className="min-w-[250px]">EMAIL</TableHead>
-                                <TableHead className="min-w-[120px]">ROLE</TableHead>
-                                <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {users.data?.map((user) => (
-                                <TableRow key={user.id} className="hover:bg-muted/50">
-                                    <TableCell className="font-medium">{formatId(user.id)}</TableCell>
-                                    <TableCell className="font-medium">{user.name}</TableCell>
-                                    <TableCell className="font-medium">{user.email}</TableCell>
-                                    <TableCell>
-                                        {user.role === 'admin' ? (
-                                            <Badge variant='default'>
-                                                {capitalize(user.role)}
-                                            </Badge>
-                                        ) : (
-                                            <Badge variant='secondary'>
-                                                {capitalize(user.role)}
-                                            </Badge>
-                                        )}
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button asChild variant='secondary' size='sm' className="gap-1">
-                                                <Link href={`/admin/users/${user.id}`}>
-                                                    <Edit className="w-4 h-4" /> Edit
-                                                </Link>
-                                            </Button>
-                                            <DeleteDialog id={user.id} action={deleteUser}>
-                                                <Trash2 className="w-4 h-4" /> Delete
-                                            </DeleteDialog>
-                                        </div>
-                                    </TableCell>
+                    <div className="max-h-[384px] min-h-[192px] overflow-y-auto">
+                        <Table className="table-fixed w-full">
+                            <TableHeader className="sticky top-0 bg-card z-10">
+                                <TableRow>
+                                    <TableHead className="min-w-[100px]">ID</TableHead>
+                                    <TableHead className="min-w-[200px]">NAME</TableHead>
+                                    <TableHead className="min-w-[250px]">EMAIL</TableHead>
+                                    <TableHead className="min-w-[120px]">ROLE</TableHead>
+                                    <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {users.data?.map((user) => (
+                                    <TableRow key={user.id} className="hover:bg-muted/50">
+                                        <TableCell className="font-medium">{formatId(user.id)}</TableCell>
+                                        <TableCell className="font-medium">{user.name}</TableCell>
+                                        <TableCell className="font-medium">{user.email}</TableCell>
+                                        <TableCell>
+                                            {user.role === 'admin' ? (
+                                                <Badge variant='default'>
+                                                    {capitalize(user.role)}
+                                                </Badge>
+                                            ) : (
+                                                <Badge variant='secondary'>
+                                                    {capitalize(user.role)}
+                                                </Badge>
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Button asChild variant='secondary' size='sm' className="gap-1">
+                                                    <Link href={`/admin/users/${user.id}`}>
+                                                        <Edit className="w-4 h-4" /> Edit
+                                                    </Link>
+                                                </Button>
+                                                <DeleteDialog id={user.id} action={deleteUser}>
+                                                    <Trash2 className="w-4 h-4" /> Delete
+                                                </DeleteDialog>
+                                            </div>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </div>
             </div>
 

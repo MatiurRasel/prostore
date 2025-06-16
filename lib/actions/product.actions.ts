@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import {  insertProductSchema, updateProductSchema } from '../validators';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
+import { utapi } from '../uploadthing-server';
 
 //GET latest products
 export async function getLatestProducts() {
@@ -139,19 +140,31 @@ export async function deleteProduct(id: string) {
     
 }
 
+function extractFileKey(url: string): string | null {
+  // For Uploadthing, the file key is after /f/
+  const match = url.match(/\/f\/([^/?#]+)/);
+  return match ? match[1] : null;
+}
+
 //Create a Product
-export async function createProduct(data: z.infer<typeof insertProductSchema>) {
+export async function createProduct(data: z.infer<typeof insertProductSchema> & { removedImages?: string[], removedBanner?: string }) {
     try {
+        // Delete removed images from Uploadthing
+        if (data.removedImages && data.removedImages.length > 0) {
+            const keys = data.removedImages.map(extractFileKey).filter(Boolean) as string[];
+            if (keys.length > 0) await utapi.deleteFiles(keys);
+        }
+        if (data.removedBanner) {
+            const key = extractFileKey(data.removedBanner);
+            if (key) await utapi.deleteFiles(key);
+        }
         const product = insertProductSchema.parse(data);
         await prisma.product.create({data: product});
-
         revalidatePath('/admin/products');
-
          return {
             success: true, 
             message: 'Product created successfully',
         }
-
     } catch (error) {
         return {
             success: false, 
@@ -161,30 +174,33 @@ export async function createProduct(data: z.infer<typeof insertProductSchema>) {
 }
 
 //Update a Product
-export async function updateProduct(data: z.infer<typeof updateProductSchema>) {
+export async function updateProduct(data: z.infer<typeof updateProductSchema> & { removedImages?: string[], removedBanner?: string }) {
     try {
+        // Delete removed images from Uploadthing
+        if (data.removedImages && data.removedImages.length > 0) {
+            const keys = data.removedImages.map(extractFileKey).filter(Boolean) as string[];
+            if (keys.length > 0) await utapi.deleteFiles(keys);
+        }
+        if (data.removedBanner) {
+            const key = extractFileKey(data.removedBanner);
+            if (key) await utapi.deleteFiles(key);
+        }
         const product = updateProductSchema.parse(data);
-        
         const productExists = await prisma.product.findFirst({
             where: {
                 id: product.id
             }
         });
-
         if(!productExists) throw new Error('Product not found.');
-
         await prisma.product.update({
             where: {id: product.id},
             data: product
         });
-
         revalidatePath('/admin/products');
-
          return {
             success: true, 
             message: 'Product updated successfully',
         }
-
     } catch (error) {
         return {
             success: false, 

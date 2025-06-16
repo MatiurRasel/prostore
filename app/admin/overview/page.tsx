@@ -99,38 +99,32 @@ const AdminOverviewPage = async () => {
                             <CardTitle>Recent Sales</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          
-                            <Table>
-                              <TableHeader>
+                          <div className="max-h-[384px] min-h-[192px] overflow-y-auto">
+                            <Table className="table-fixed w-full">
+                              <TableHeader className="sticky top-0 bg-card z-10">
                                 <TableRow>
-                                  <TableHead>BUYER</TableHead>
-                                  <TableHead>DATE</TableHead>
-                                  <TableHead>TOTAL</TableHead>
-                                  <TableHead>ACTIONS</TableHead>
+                                  <TableHead className="w-1/4">BUYER</TableHead>
+                                  <TableHead className="w-1/4">DATE</TableHead>
+                                  <TableHead className="w-1/4">TOTAL</TableHead>
+                                  <TableHead className="w-1/4">ACTIONS</TableHead>
                                 </TableRow>
                               </TableHeader>
-
-                              {/* Scrollable body with max-height */}
-                               {/* 6 rows × ~64px = 384px */}
-                                <TableBody 
-                                // className="max-h-[384px] overflow-y-auto"
-                                >
-                                  {summary.latestSales.map((order) => (
-                                    <TableRow key={order.id}>
-                                      <TableCell>{order?.user?.name || 'Deleted User'}</TableCell>
-                                      <TableCell>{formatDateTime(order.createdAt).dateOnly}</TableCell>
-                                      <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
-                                      <TableCell>
-                                        <Link href={`/order/${order.id}`}>
-                                          <span className="px-2">Details</span>
-                                        </Link>
-                                      </TableCell>
-                                    </TableRow>
-                                  ))}
-                                </TableBody>
-                             
+                              <TableBody>
+                                {summary.latestSales.map((order) => (
+                                  <TableRow key={order.id}>
+                                    <TableCell>{order?.user?.name || 'Deleted User'}</TableCell>
+                                    <TableCell>{formatDateTime(order.createdAt).dateOnly}</TableCell>
+                                    <TableCell>{formatCurrency(order.totalPrice)}</TableCell>
+                                    <TableCell>
+                                      <Link href={`/order/${order.id}`}>
+                                        <span className="px-2">Details</span>
+                                      </Link>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
                             </Table>
-
+                          </div>
                         </CardContent>
                     </Card>         
             </div>
