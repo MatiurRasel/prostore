@@ -35,14 +35,12 @@ const AdminOrderPage = async (props: {
             <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="h2-bold">Orders</h1>
                 {searchText && (
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap bg-muted/60 rounded px-3 py-1 border border-muted-foreground/10">
                         <span className="text-sm text-muted-foreground">
-                            Filtered by: <i>&quot;{searchText}&quot;</i>
+                            Filtered by: <span className="font-semibold text-primary">&quot;{searchText}&quot;</span>
                         </span>
                         <Link href="/admin/orders">
-                            <Button variant='outline' size='sm'>
-                                Remove Filter
-                            </Button>
+                            <Button variant='ghost' size='sm' className="ml-1 px-2 py-1 h-auto text-xs">Remove Filter</Button>
                         </Link>
                     </div>
                 )}
@@ -51,25 +49,25 @@ const AdminOrderPage = async (props: {
             {/* Desktop Table */}
             <div className="hidden md:block">
                 <div className="rounded-lg border shadow-sm">
-                    <Table>
+                    <Table className="w-full">
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="min-w-[100px]">ID</TableHead>
-                                <TableHead className="min-w-[180px]">DATE</TableHead>
-                                <TableHead className="min-w-[150px]">BUYER</TableHead>
-                                <TableHead className="min-w-[120px]">TOTAL</TableHead>
-                                <TableHead className="min-w-[180px]">PAID</TableHead>
-                                <TableHead className="min-w-[180px]">DELIVERED</TableHead>
-                                <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
+                                <TableHead className="">ID</TableHead>
+                                <TableHead className="">DATE</TableHead>
+                                <TableHead className="">BUYER</TableHead>
+                                <TableHead className="">TOTAL</TableHead>
+                                <TableHead className="">PAID</TableHead>
+                                <TableHead className="">DELIVERED</TableHead>
+                                <TableHead className="text-center">ACTIONS</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {orders.data?.map((order) => (
                                 <TableRow key={order.id} className="hover:bg-muted/50">
-                                    <TableCell className="font-medium">{formatId(order.id)}</TableCell>
+                                    <TableCell className="font-medium whitespace-nowrap">{formatId(order.id)}</TableCell>
                                     <TableCell className="whitespace-nowrap">{formatDateTime(order.createdAt).dateTime}</TableCell>
-                                    <TableCell className="font-medium">{order.user.name}</TableCell>
-                                    <TableCell className="font-medium">{formatCurrency(order.totalPrice)}</TableCell>
+                                    <TableCell className="font-medium whitespace-nowrap text-ellipsis overflow-hidden max-w-[120px]">{order.user.name}</TableCell>
+                                    <TableCell className="font-medium whitespace-nowrap">{formatCurrency(order.totalPrice)}</TableCell>
                                     <TableCell className="whitespace-nowrap">
                                         {order.isPaid && order.paidAt ? 
                                             formatDateTime(order.paidAt).dateTime : 
@@ -82,8 +80,8 @@ const AdminOrderPage = async (props: {
                                             <span className="text-destructive">Not Delivered</span>
                                         }
                                     </TableCell>
-                                    <TableCell className="text-right">
-                                        <div className="flex justify-end gap-2">
+                                    <TableCell className="text-center">
+                                        <div className="flex flex-col items-center gap-2">
                                             <Button asChild variant='secondary' size='sm' className="gap-1">
                                                 <Link href={`/order/${order.id}`}>
                                                     <ArrowRight className="w-4 h-4" /> Details

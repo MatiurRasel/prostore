@@ -29,14 +29,12 @@ const AdminUserPage = async(props: {
             <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="h2-bold">Users</h1>
                 {searchText && (
-                    <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap bg-muted/60 rounded px-3 py-1 border border-muted-foreground/10">
                         <span className="text-sm text-muted-foreground">
-                            Filtered by: <i>&quot;{searchText}&quot;</i>
+                            Filtered by: <span className="font-semibold text-primary">&quot;{searchText}&quot;</span>
                         </span>
                         <Link href="/admin/users">
-                            <Button variant='outline' size='sm'>
-                                Remove Filter
-                            </Button>
+                            <Button variant='ghost' size='sm' className="ml-1 px-2 py-1 h-auto text-xs">Remove Filter</Button>
                         </Link>
                     </div>
                 )}
@@ -45,7 +43,7 @@ const AdminUserPage = async(props: {
             {/* Desktop Table */}
             <div className="hidden md:block">
                 <div className="rounded-lg border shadow-sm">
-                    <div className="max-h-[384px] min-h-[192px] overflow-y-auto">
+                    <div className="overflow-y-auto">
                         <Table className="table-fixed w-full">
                             <TableHeader className="sticky top-0 bg-card z-10">
                                 <TableRow>
