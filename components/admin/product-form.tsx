@@ -19,7 +19,6 @@ import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import { Checkbox } from "../ui/checkbox";
 import { useState } from "react";
-import { Loader } from "../ui/loader";
 import LoadingButton from "../ui/loading-button";
 
 type ProductFormProps = {
