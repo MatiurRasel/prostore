@@ -9,7 +9,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MotionDiv } from "@/components/ui/motion";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 
 export const metadata: Metadata = {
     title: 'Admin Users',
@@ -19,10 +19,33 @@ const AdminUserPage = async(props: {
     searchParams: Promise<{
         page: string;
         query: string;
+        sort?: string;
+        order?: string;
     }>
 }) => {
-    const {page = '1', query: searchText} = await props.searchParams;
-    const users = await getAllUsers({page: Number(page), query: searchText});
+    const searchParams = await props.searchParams;
+    const page = Number(searchParams.page) || 1;
+    const searchText = searchParams.query || '';
+    const sort = searchParams.sort || 'createdAt';
+    const order = (searchParams.order === 'asc' || searchParams.order === 'desc') ? searchParams.order : 'desc';
+
+    const users = await getAllUsers({
+        page,
+        query: searchText,
+        sort,
+        order,
+    });
+
+    function SortArrow({active, direction}: {active: boolean, direction: 'asc' | 'desc'}) {
+        if (!active) return <span className="inline-block w-4" />;
+        return direction === 'asc' ? <ArrowUp className="inline-block w-4 h-4 ml-1" /> : <ArrowDown className="inline-block w-4 h-4 ml-1" />;
+    }
+
+    function buildSortLink(col: string) {
+        let nextOrder: 'asc' | 'desc' = 'asc';
+        if (sort === col && order === 'asc') nextOrder = 'desc';
+        return `/admin/users?page=${page}&query=${encodeURIComponent(searchText)}&sort=${col}&order=${nextOrder}`;
+    }
 
     return ( 
         <div className="space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
@@ -47,10 +70,26 @@ const AdminUserPage = async(props: {
                         <Table className="table-fixed w-full">
                             <TableHeader className="sticky top-0 bg-card z-10">
                                 <TableRow>
-                                    <TableHead className="min-w-[100px]">ID</TableHead>
-                                    <TableHead className="min-w-[200px]">NAME</TableHead>
-                                    <TableHead className="min-w-[250px]">EMAIL</TableHead>
-                                    <TableHead className="min-w-[120px]">ROLE</TableHead>
+                                    <TableHead className="min-w-[100px] cursor-pointer">
+                                        <Link href={buildSortLink('id')}>
+                                            ID <SortArrow active={sort==='id'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[200px] cursor-pointer">
+                                        <Link href={buildSortLink('name')}>
+                                            NAME <SortArrow active={sort==='name'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[250px] cursor-pointer">
+                                        <Link href={buildSortLink('email')}>
+                                            EMAIL <SortArrow active={sort==='email'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[120px] cursor-pointer">
+                                        <Link href={buildSortLink('role')}>
+                                            ROLE <SortArrow active={sort==='role'} direction={order} />
+                                        </Link>
+                                    </TableHead>
                                     <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
                                 </TableRow>
                             </TableHeader>

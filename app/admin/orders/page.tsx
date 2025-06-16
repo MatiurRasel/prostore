@@ -9,16 +9,20 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MotionDiv } from "@/components/ui/motion";
-import { ArrowRight, Trash2 } from "lucide-react";
+import { ArrowRight, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 
 export const metadata: Metadata = {
     title: 'Admin Orders'
 }
 
 const AdminOrderPage = async (props: {
-    searchParams: Promise<{page: string; query: string}>
+    searchParams: Promise<{page: string; query: string; sort?: string; order?: string;}>
 }) => {
-    const {page = '1', query: searchText} = await props.searchParams;
+    const searchParams = await props.searchParams;
+    const page = Number(searchParams.page) || 1;
+    const searchText = searchParams.query || '';
+    const sort = searchParams.sort || 'createdAt';
+    const order = (searchParams.order === 'asc' || searchParams.order === 'desc') ? searchParams.order : 'desc';
     const session = await auth();
 
     if(session?.user?.role !=='admin') {
@@ -26,9 +30,24 @@ const AdminOrderPage = async (props: {
     }
 
     const orders = await getAllOrders({
-        page: Number(page),
-        query: searchText
+        page,
+        query: searchText,
+        sort,
+        order,
     });
+
+    // Helper for sort arrows
+    function SortArrow({active, direction}: {active: boolean, direction: 'asc' | 'desc'}) {
+        if (!active) return <span className="inline-block w-4" />;
+        return direction === 'asc' ? <ArrowUp className="inline-block w-4 h-4 ml-1" /> : <ArrowDown className="inline-block w-4 h-4 ml-1" />;
+    }
+
+    // Helper for building sort links
+    function buildSortLink(col: string) {
+        let nextOrder: 'asc' | 'desc' = 'asc';
+        if (sort === col && order === 'asc') nextOrder = 'desc';
+        return `/admin/orders?page=${page}&query=${encodeURIComponent(searchText)}&sort=${col}&order=${nextOrder}`;
+    }
 
     return ( 
         <div className="space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
@@ -52,12 +71,36 @@ const AdminOrderPage = async (props: {
                     <Table className="w-full">
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="">ID</TableHead>
-                                <TableHead className="">DATE</TableHead>
-                                <TableHead className="">BUYER</TableHead>
-                                <TableHead className="">TOTAL</TableHead>
-                                <TableHead className="">PAID</TableHead>
-                                <TableHead className="">DELIVERED</TableHead>
+                                <TableHead className="cursor-pointer">
+                                    <Link href={buildSortLink('id')}>
+                                        ID <SortArrow active={sort==='id'} direction={order} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="cursor-pointer">
+                                    <Link href={buildSortLink('createdAt')}>
+                                        DATE <SortArrow active={sort==='createdAt'} direction={order} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="cursor-pointer">
+                                    <Link href={buildSortLink('user.name')}>
+                                        BUYER <SortArrow active={sort==='user.name'} direction={order} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="cursor-pointer">
+                                    <Link href={buildSortLink('totalPrice')}>
+                                        TOTAL <SortArrow active={sort==='totalPrice'} direction={order} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="cursor-pointer">
+                                    <Link href={buildSortLink('paidAt')}>
+                                        PAID <SortArrow active={sort==='paidAt'} direction={order} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="cursor-pointer">
+                                    <Link href={buildSortLink('deliveredAt')}>
+                                        DELIVERED <SortArrow active={sort==='deliveredAt'} direction={order} />
+                                    </Link>
+                                </TableHead>
                                 <TableHead className="text-center">ACTIONS</TableHead>
                             </TableRow>
                         </TableHeader>

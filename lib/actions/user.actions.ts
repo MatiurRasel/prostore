@@ -222,15 +222,17 @@ export async function updateProfile(user: {name: string; email: string}) {
 export async function getAllUsers({
     limit= PAGE_SIZE,
     page,
-    query
-
+    query,
+    sort = 'createdAt',
+    order = 'desc',
 }: {
     limit?: number;
     page: number;
     query: string;
+    sort?: string;
+    order?: 'asc' | 'desc';
 }) {
     try {
-
         const queryFilter: Prisma.UserWhereInput = query && query !== 'all' ? {
             name: {
                 contains: query,
@@ -238,11 +240,19 @@ export async function getAllUsers({
             } as Prisma.StringFilter
         } : {};
 
+        // Map sort keys to Prisma orderBy fields
+        let orderBy: Prisma.UserOrderByWithRelationInput = { createdAt: 'desc' };
+        if (sort === 'id') orderBy = { id: order };
+        else if (sort === 'name') orderBy = { name: order };
+        else if (sort === 'email') orderBy = { email: order };
+        else if (sort === 'role') orderBy = { role: order };
+        else if (sort === 'createdAt') orderBy = { createdAt: order };
+
         const data = await prisma.user.findMany({
             where: {
                 ...queryFilter
             },
-            orderBy: {createdAt: 'desc'},
+            orderBy,
             skip: (page - 1) * limit,
             take: limit
         });

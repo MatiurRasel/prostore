@@ -7,23 +7,40 @@ import { formatCurrency, formatId } from "@/lib/utils";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MotionDiv } from "@/components/ui/motion";
-import { Edit, Plus, Trash2 } from "lucide-react";
+import { Edit, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 
 const AdminProductPage = async(props: {
     searchParams: Promise<{
         page: string;
         query: string;
         category: string;
+        sort?: string;
+        order?: string;
     }>
 }) => {
     const searchParams = await props.searchParams;
     const page = Number(searchParams.page) || 1;
     const searchText = searchParams.query || '';
+    const sort = searchParams.sort || 'createdAt';
+    const order = (searchParams.order === 'asc' || searchParams.order === 'desc') ? searchParams.order : 'desc';
 
     const products = await getAllProducts({
         query: searchText,
         page,
+        sort,
+        order,
     });
+
+    function SortArrow({active, direction}: {active: boolean, direction: 'asc' | 'desc'}) {
+        if (!active) return <span className="inline-block w-4" />;
+        return direction === 'asc' ? <ArrowUp className="inline-block w-4 h-4 ml-1" /> : <ArrowDown className="inline-block w-4 h-4 ml-1" />;
+    }
+
+    function buildSortLink(col: string) {
+        let nextOrder: 'asc' | 'desc' = 'asc';
+        if (sort === col && order === 'asc') nextOrder = 'desc';
+        return `/admin/products?page=${page}&query=${encodeURIComponent(searchText)}&sort=${col}&order=${nextOrder}`;
+    }
 
     return ( 
         <div className="space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
@@ -56,12 +73,36 @@ const AdminProductPage = async(props: {
                         <Table className="table-fixed w-full">
                             <TableHeader className="sticky top-0 bg-card z-10">
                                 <TableRow>
-                                    <TableHead className="min-w-[100px]">ID</TableHead>
-                                    <TableHead className="min-w-[200px]">NAME</TableHead>
-                                    <TableHead className="min-w-[120px] text-right">PRICE</TableHead>
-                                    <TableHead className="min-w-[120px]">CATEGORY</TableHead>
-                                    <TableHead className="min-w-[100px]">STOCK</TableHead>
-                                    <TableHead className="min-w-[100px]">RATING</TableHead>
+                                    <TableHead className="min-w-[100px] cursor-pointer">
+                                        <Link href={buildSortLink('id')}>
+                                            ID <SortArrow active={sort==='id'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[200px] cursor-pointer">
+                                        <Link href={buildSortLink('name')}>
+                                            NAME <SortArrow active={sort==='name'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[120px] text-right cursor-pointer">
+                                        <Link href={buildSortLink('price')}>
+                                            PRICE <SortArrow active={sort==='price'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[120px] cursor-pointer">
+                                        <Link href={buildSortLink('category')}>
+                                            CATEGORY <SortArrow active={sort==='category'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[100px] cursor-pointer">
+                                        <Link href={buildSortLink('stock')}>
+                                            STOCK <SortArrow active={sort==='stock'} direction={order} />
+                                        </Link>
+                                    </TableHead>
+                                    <TableHead className="min-w-[100px] cursor-pointer">
+                                        <Link href={buildSortLink('rating')}>
+                                            RATING <SortArrow active={sort==='rating'} direction={order} />
+                                        </Link>
+                                    </TableHead>
                                     <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
                                 </TableRow>
                             </TableHeader>

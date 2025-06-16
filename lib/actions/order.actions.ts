@@ -301,22 +301,32 @@ export async function updateOrderToPaid({
 //Get user's orders
 export async function getMyOrders({
     limit = PAGE_SIZE,
-    page
+    page,
+    sort = 'createdAt',
+    order = 'desc',
 } : {
     limit?: number;
     page: number;
+    sort?: string;
+    order?: 'asc' | 'desc';
 }) {
     try {
         const session = await auth();
         if(!session) throw new Error('User is not authenticated');
 
+        // Map sort keys to Prisma orderBy fields
+        let orderBy: Prisma.OrderOrderByWithRelationInput = { createdAt: 'desc' };
+        if (sort === 'id') orderBy = { id: order };
+        else if (sort === 'createdAt' || sort === 'date') orderBy = { createdAt: order };
+        else if (sort === 'total' || sort === 'totalPrice') orderBy = { totalPrice: order };
+        else if (sort === 'paid' || sort === 'paidAt') orderBy = { paidAt: order };
+        else if (sort === 'delivered' || sort === 'deliveredAt') orderBy = { deliveredAt: order };
+
         const data = await prisma.order.findMany({
             where: {
                 userId: session?.user?.id
             },
-            orderBy: {
-                createdAt: 'desc',
-            },
+            orderBy,
             take: limit,
             skip: (page - 1) * limit,
         });
@@ -395,11 +405,15 @@ export async function getOrderSummary() {
 export async function getAllOrders({
     limit = PAGE_SIZE,
     page,
-    query
+    query,
+    sort = 'createdAt',
+    order = 'desc',
 }: {
     limit?:number;
     page: number;
     query: string;
+    sort?: string;
+    order?: 'asc' | 'desc';
 }) {
 
     const queryFilter: Prisma.OrderWhereInput = query && query !== 'all' ? {
@@ -411,11 +425,18 @@ export async function getAllOrders({
         }
     } : {};
 
+    // Map sort keys to Prisma orderBy fields
+    let orderBy: Prisma.OrderOrderByWithRelationInput = { createdAt: 'desc' };
+    if (sort === 'id') orderBy = { id: order };
+    else if (sort === 'createdAt' || sort === 'date') orderBy = { createdAt: order };
+    else if (sort === 'buyer' || sort === 'user.name') orderBy = { user: { name: order } };
+    else if (sort === 'total' || sort === 'totalPrice') orderBy = { totalPrice: order };
+    else if (sort === 'paid' || sort === 'paidAt') orderBy = { paidAt: order };
+    else if (sort === 'delivered' || sort === 'deliveredAt') orderBy = { deliveredAt: order };
+
     const data = await prisma.order.findMany({
         where: queryFilter,
-        orderBy: {
-            createdAt:'desc'
-        },
+        orderBy,
         take: limit,
         skip: (page - 1) * limit,
         include: {

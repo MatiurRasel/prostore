@@ -44,7 +44,8 @@ export async function getAllProducts({
     category,
     price,
     rating,
-    sort,
+    sort = 'createdAt',
+    order = 'desc',
 }: {
     query: string;
     limit?: number;
@@ -53,6 +54,7 @@ export async function getAllProducts({
     price?: string;
     rating?: string;
     sort?: string;
+    order?: 'asc' | 'desc';
 }) {
 
     //query filter
@@ -81,6 +83,15 @@ export async function getAllProducts({
         }
     }:{};
     
+    // Map sort keys to Prisma orderBy fields
+    let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };
+    if (sort === 'id') orderBy = { id: order };
+    else if (sort === 'name') orderBy = { name: order };
+    else if (sort === 'price') orderBy = { price: order };
+    else if (sort === 'category') orderBy = { category: order };
+    else if (sort === 'stock') orderBy = { stock: order };
+    else if (sort === 'rating') orderBy = { rating: order };
+    else if (sort === 'createdAt') orderBy = { createdAt: order };
 
     const data = await prisma.product.findMany({
         where: {
@@ -89,14 +100,7 @@ export async function getAllProducts({
             ...priceFilter,
             ...ratingFilter
         },
-        orderBy: 
-            sort === 'lowest' 
-            ? {price: 'asc'} 
-            : sort === 'highest' 
-            ? {price: 'desc'} 
-            : sort === 'rating' 
-            ? {rating: 'desc'} 
-            : {createdAt: 'desc'},
+        orderBy,
         skip: (page - 1) * limit,
         take: limit,
     });

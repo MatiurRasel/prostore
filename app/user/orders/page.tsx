@@ -7,19 +7,35 @@ import Pagination from "@/components/shared/pagination";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MotionDiv } from "@/components/ui/motion";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUp, ArrowDown } from "lucide-react";
 
 export const metadata: Metadata = {
     title: 'My Orders',
 }
 
 const OrdersPage = async (props: {
-    searchParams: Promise<{page: string}>
+    searchParams: Promise<{page: string, sort?: string, order?: string}>
 }) => {
-    const {page} = await props.searchParams;
+    const {page, sort, order} = await props.searchParams;
+    const sortKey = sort || 'createdAt';
+    const sortOrder = (order === 'asc' || order === 'desc') ? order : 'desc';
     const orders = await getMyOrders({
         page: Number(page) || 1,
+        sort: sortKey,
+        order: sortOrder,
     });
+
+    function SortArrow({active, direction}: {active: boolean, direction: 'asc' | 'desc'}) {
+        if (!active) return <span className="inline-block w-4" />;
+        return direction === 'asc' ? <ArrowUp className="inline-block w-4 h-4 ml-1" /> : <ArrowDown className="inline-block w-4 h-4 ml-1" />;
+    }
+
+    function buildSortLink(col: string) {
+        let nextOrder: 'asc' | 'desc' = 'asc';
+        if (sortKey === col && sortOrder === 'asc') nextOrder = 'desc';
+        return `/user/orders?page=${page || 1}&sort=${col}&order=${nextOrder}`;
+    }
+
     return (
         <div className="space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
             <h2 className="h2-bold text-center py-2 sticky top-0 z-10 bg-background/80 backdrop-blur-md">Orders</h2>
@@ -29,11 +45,31 @@ const OrdersPage = async (props: {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="min-w-[100px]">ID</TableHead>
-                                <TableHead className="min-w-[180px]">DATE</TableHead>
-                                <TableHead className="min-w-[120px]">TOTAL</TableHead>
-                                <TableHead className="min-w-[180px]">PAID</TableHead>
-                                <TableHead className="min-w-[180px]">DELIVERED</TableHead>
+                                <TableHead className="min-w-[100px] cursor-pointer">
+                                    <Link href={buildSortLink('id')}>
+                                        ID <SortArrow active={sortKey==='id'} direction={sortOrder} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="min-w-[180px] cursor-pointer">
+                                    <Link href={buildSortLink('createdAt')}>
+                                        DATE <SortArrow active={sortKey==='createdAt'} direction={sortOrder} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="min-w-[120px] cursor-pointer">
+                                    <Link href={buildSortLink('totalPrice')}>
+                                        TOTAL <SortArrow active={sortKey==='totalPrice'} direction={sortOrder} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="min-w-[180px] cursor-pointer">
+                                    <Link href={buildSortLink('paidAt')}>
+                                        PAID <SortArrow active={sortKey==='paidAt'} direction={sortOrder} />
+                                    </Link>
+                                </TableHead>
+                                <TableHead className="min-w-[180px] cursor-pointer">
+                                    <Link href={buildSortLink('deliveredAt')}>
+                                        DELIVERED <SortArrow active={sortKey==='deliveredAt'} direction={sortOrder} />
+                                    </Link>
+                                </TableHead>
                                 <TableHead className="min-w-[100px] text-right">ACTIONS</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -121,7 +157,7 @@ const OrdersPage = async (props: {
                 <div className="flex justify-center mt-4">
                     <Pagination
                         page={Number(page) || 1}
-                        totalPages={orders.totalPages}
+                        totalPages={orders.totalPages || 1}
                     />
                 </div>
             )}
