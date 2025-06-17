@@ -1,11 +1,28 @@
 import {z} from 'zod';
 import { formatNumberWithDecimal } from './utils';
 import { PAYMENT_METHODS } from './constants';
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
 
 const currency = z
 .string()
 .refine((value) => /^\d+(\.\d{2})?$/.test(formatNumberWithDecimal(Number(value))),
 "Price must have exactly two decimal places");
+
+
+const phoneNumberSchema = z
+  .string()
+  .nullable()
+  .optional()
+  .refine(
+    (val) =>
+      !val ||
+      (typeof val === 'string' &&
+        !!parsePhoneNumberFromString(val)?.isValid()),
+    {
+      message: 'Invalid phone number',
+    }
+  );
+
 
 //Schema for inserting products
 export const insertProductSchema = z.object({
@@ -38,6 +55,7 @@ export const signUpFormSchema = z.object({
     email: z.string().email('Invalid Email Address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     confirmPassword: z.string().min(6, 'Confirm Password must be at least 6 characters'),
+    phoneNumber: phoneNumberSchema,
     //tempPassword: z.string().nullable(),
 }).refine((data) => data.password === data.confirmPassword,{
     message: "Passwords don't match",
@@ -126,8 +144,10 @@ export const updateProfileSchema = z.object({
 
 //Schema for updating the users
 export const updateUserSchema = updateProfileSchema.extend({
-    id: z.string().min(1, 'Id is required'),
-    role: z.string().min(1, 'Role is required'),
+    id: z.string(),
+    role: z.string(),
+    imageUrl: z.string().optional(),
+    phoneNumber: phoneNumberSchema,
 });
 
 //Schema for inserting a review

@@ -241,4 +241,14 @@ export async function getFeaturedProducts() {
     return convertToPlainObject(data);
 }
 
+export async function deleteProductImage(imageUrl: string) {
+  try {
+    const key = extractFileKey(imageUrl);
+    if (key) await utapi.deleteFiles(key);
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
+
 

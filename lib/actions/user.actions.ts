@@ -16,6 +16,8 @@ import { z } from "zod";
 import { PAGE_SIZE } from "../constants";
 import { revalidatePath } from "next/cache";
 import { Prisma } from "@prisma/client";
+import { hash } from 'bcrypt';
+import { utapi } from '../uploadthing-server';
 
 //Sign in the user with credentials
 export async function signInWithCredentials(prevState: unknown,
@@ -298,6 +300,7 @@ export async function deleteUser(userId: string) {
 
 //Update a user
 export async function updateUser(user: z.infer<typeof updateUserSchema>) {
+    debugger
     try {
         const session = await auth();
 
@@ -307,7 +310,9 @@ export async function updateUser(user: z.infer<typeof updateUserSchema>) {
             where: {id: user.id},
             data: {
                 name: user.name,
-                role: user.role
+                role: user.role,
+                image: user.imageUrl,
+                phoneNumber: user.phoneNumber ?? null,
             }
         });
 
@@ -324,5 +329,124 @@ export async function updateUser(user: z.infer<typeof updateUserSchema>) {
             message: formatError(error)
         };
     }
+}
+
+export async function createUserWithPhoto(formData: FormData) {
+  try {
+    const session = await auth();
+
+    if(session?.user?.role !== 'admin') throw new Error('Unauthorized');
+
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    const role = formData.get('role') as string;
+    const imageUrl = formData.get('imageUrl') as string | undefined;
+    const phoneNumber = formData.get('phoneNumber') as string | undefined;
+
+    await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: await hash(password, 10),
+        role,
+        image: imageUrl,
+        phoneNumber: phoneNumber ?? null,
+      }
+    });
+
+    revalidatePath('/admin/users');
+
+    return {
+      success: true,
+      message: 'User created successfully'
+    }
+    
+  } catch (error) {
+    return {
+      success: false,
+      message: formatError(error)
+    };
+  }
+}
+
+export async function createUsersBulkWithPhoto(users: Array<{ name: string; email: string; password: string; imageUrl?: string; }>) {
+    const results: Array<{ email: string; success: boolean; userId?: string; image?: string; message?: string }> = [];
+    for (const user of users) {
+        const plainPassword =  user.password;
+        user.password = hashSync(user.password, 10);
+        try {
+            const created = await prisma.user.create({
+                data: {
+                    name: user.name,
+                    email: user.email,
+                    tempPassword: plainPassword,
+                    password: user.password, // or hash if needed
+                    role: 'user',
+                }
+            });
+            let imagePath = undefined;
+            if (user.imageUrl) {
+                const ext = user.imageUrl.split('.').pop();
+                imagePath = `/user/${created.id}.${ext}`;
+                await prisma.user.update({
+                    where: { id: created.id },
+                    data: { image: imagePath }
+                });
+            }
+            results.push({ email: user.email, success: true, userId: created.id, image: imagePath });
+        } catch (error) {
+            results.push({ email: user.email, success: false, message: formatError(error) });
+        }
+    }
+    return results;
+}
+
+export async function createUsersFromExcel(users: Array<{ name: string; email: string; password: string; }>) {
+    const results: Array<{ email: string; success: boolean; userId?: string; message?: string }> = [];
+    for (const user of users) {
+        const plainPassword =  user.password;
+        user.password = hashSync(user.password, 10);
+        try {
+            const created = await prisma.user.create({
+                data: {
+                    name: user.name,
+                    email: user.email,
+                    tempPassword: plainPassword,
+                    password: user.password, // or hash if needed
+                    role: 'user',
+                }
+            });
+            results.push({ email: user.email, success: true, userId: created.id });
+        } catch (error) {
+            results.push({ email: user.email, success: false, message: formatError(error) });
+        }
+    }
+    return results;
+}
+
+export async function deleteUserImage(imageUrl: string) {
+  try {
+    // Extract the file key from the imageUrl (after /f/)
+    const match = imageUrl.match(/\/f\/(.+)$/);
+    const fileKey = match ? match[1] : null;
+    if (!fileKey) throw new Error('Invalid image URL');
+    await utapi.deleteFiles(fileKey);
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+  }
+}
+
+export async function clearUserImage(userId: string) {
+  try {
+    await prisma.user.update({
+      where: { id: userId },
+      data: { image: null }
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+  }
 }
 

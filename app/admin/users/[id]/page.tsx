@@ -1,30 +1,20 @@
-import { getUserById } from "@/lib/actions/user.actions";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
-import UpdateUserForm from "./update-user-form";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
     title: 'Update User',
 }
 
-const AdminUserUpdatePage = async(props: {
-    params: Promise<{
-        id: string;
-    }>
-}) => {
-    const {id} = await props.params;
-
-    const user = await getUserById(id);
-
-    if(!user) notFound();
-
-   
-    return ( 
-        <div className="space-y-8 max-w-lg mx-auto">
-            <h1 className="h2-bold">Update User</h1>
-            <UpdateUserForm user={user}/>
-        </div>
-     );
+const AdminUserUpdatePage = async() => {
+    // Optionally, redirect to /admin/users
+    redirect('/admin/users');
+    // If you want to show a message instead, comment out the above line and uncomment below:
+    // return (
+    //   <div className="max-w-lg mx-auto py-10">
+    //     <h1 className="h2-bold mb-4">User Edit</h1>
+    //     <p>User editing is now handled inline in the users table.</p>
+    //   </div>
+    // );
 }
- 
+
 export default AdminUserUpdatePage;

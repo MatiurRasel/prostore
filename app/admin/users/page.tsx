@@ -9,7 +9,11 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MotionDiv } from "@/components/ui/motion";
-import { Edit, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { UserActionsBar } from '@/components/admin/UserActionsBar';
+import { UserTableActions } from '@/components/admin/UserTableActions';
+import { BulkUserUploadModalClient } from '@/components/admin/BulkUserUploadModalClient';
+import { User } from "@prisma/client";
 
 export const metadata: Metadata = {
     title: 'Admin Users',
@@ -51,6 +55,16 @@ const AdminUserPage = async(props: {
         <div className="space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
             <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="h2-bold">Users</h1>
+            </div>
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex justify-end gap-2">
+                    <UserActionsBar />
+                    <BulkUserUploadModalClient />
+                </div>
+                
+            </div>
+
+            <div className="flex items-center gap-3 flex-wrap">
                 {searchText && (
                     <div className="flex items-center gap-2 flex-wrap bg-muted/60 rounded px-3 py-1 border border-muted-foreground/10">
                         <span className="text-sm text-muted-foreground">
@@ -94,7 +108,7 @@ const AdminUserPage = async(props: {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {users.data?.map((user) => (
+                                {users.data?.map((user: User) => (
                                     <TableRow key={user.id} className="hover:bg-muted/50">
                                         <TableCell className="font-medium">{formatId(user.id)}</TableCell>
                                         <TableCell className="font-medium">{user.name}</TableCell>
@@ -112,11 +126,7 @@ const AdminUserPage = async(props: {
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-2">
-                                                <Button asChild variant='secondary' size='sm' className="gap-1">
-                                                    <Link href={`/admin/users/${user.id}`}>
-                                                        <Edit className="w-4 h-4" /> Edit
-                                                    </Link>
-                                                </Button>
+                                                <UserTableActions user={user} />
                                                 <DeleteDialog id={user.id} action={deleteUser}>
                                                     <Trash2 className="w-4 h-4" /> Delete
                                                 </DeleteDialog>
@@ -132,7 +142,7 @@ const AdminUserPage = async(props: {
 
             {/* Mobile Cards */}
             <div className="flex flex-col gap-4 md:hidden">
-                {users.data?.map((user, i) => (
+                {users.data?.map((user: User, i: number) => (
                     <MotionDiv
                         key={user.id}
                         initial={{ opacity: 0, y: 20 }}
@@ -169,11 +179,7 @@ const AdminUserPage = async(props: {
                                 </div>
                             </CardContent>
                             <CardFooter className="flex justify-end gap-2 px-4 pb-4 pt-0">
-                                <Button asChild size="sm" className="gap-1">
-                                    <Link href={`/admin/users/${user.id}`}>
-                                        <Edit className="w-4 h-4" /> Edit
-                                    </Link>
-                                </Button>
+                                <UserTableActions user={user} />
                                 <DeleteDialog id={user.id} action={deleteUser}>
                                     <Trash2 className="w-4 h-4" /> Delete
                                 </DeleteDialog>

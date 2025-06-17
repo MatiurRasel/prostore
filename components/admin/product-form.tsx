@@ -13,7 +13,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import slugify from'slugify';
 import { Textarea } from "../ui/textarea";
-import { createProduct, updateProduct } from "@/lib/actions/product.actions";
+import { createProduct, updateProduct, deleteProductImage } from "@/lib/actions/product.actions";
 import { UploadButton } from "@/lib/uploadthing";
 import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
@@ -42,6 +42,7 @@ const ProductForm = ({
     // Track removed images and banner
     const [removedImages, setRemovedImages] = useState<string[]>([]);
     const [removedBanner, setRemovedBanner] = useState<string | null>(null);
+    const [uploadingProductImage, setUploadingProductImage] = useState(false);
 
     const form = useForm<z.infer<typeof updateProductSchema | typeof insertProductSchema>>({
         resolver: zodResolver(isUpdate ? updateProductSchema : insertProductSchema),
@@ -234,7 +235,8 @@ const ProductForm = ({
                                                 <button
                                                     type="button"
                                                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                                                    onClick={() => {
+                                                    onClick={async () => {
+                                                        await deleteProductImage(image);
                                                         const newImages = [...images];
                                                         newImages.splice(idx, 1);
                                                         form.setValue('images', newImages);
@@ -247,22 +249,37 @@ const ProductForm = ({
                                             </div>
                                         ))}
                                         <FormControl>
-                                            <UploadButton
-                                            endpoint="imageUploader"
-                                            onClientUploadComplete={(res : {url: string}[]) => {
-                                                form.setValue('images', [...images, res[0].url]);
-                                            }}
-                                            onUploadError={(error: Error) => {
-                                                toast({
-                                                    title: 'Error',
-                                                    description: `ERROR! ${error.message} `,
-                                                    variant: 'destructive',
-                                                });
-                                            }}
-                                            />
+                                            <div className="relative">
+                                                <UploadButton
+                                                    endpoint="imageUploader"
+                                                    onClientUploadComplete={(res : {url: string}[]) => {
+                                                        form.setValue('images', [...images, res[0].url]);
+                                                        setUploadingProductImage(false);
+                                                    }}
+                                                    onUploadBegin={() => setUploadingProductImage(true)}
+                                                    onUploadError={(error: Error) => {
+                                                        setUploadingProductImage(false);
+                                                        toast({
+                                                            title: 'Error',
+                                                            description: `ERROR! ${error.message} `,
+                                                            variant: 'destructive',
+                                                        });
+                                                    }}
+                                                    appearance={{
+                                                        button: 'bg-white text-black border border-gray-300 rounded px-4 py-2',
+                                                    }}
+                                                />
+                                                {uploadingProductImage && (
+                                                    <div className="absolute left-0 right-0 top-12 flex justify-center items-center">
+                                                        <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                                            <div className="h-full bg-primary animate-pulse rounded-full" style={{ width: '100%' }} />
+                                                        </div>
+                                                        <span className="ml-2 text-xs text-muted-foreground">Uploading...</span>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </FormControl>
                                     </div>
-
                                 </CardContent>
                             </Card>
                             <FormMessage/>
@@ -299,7 +316,8 @@ const ProductForm = ({
                                 <button
                                     type="button"
                                     className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg"
-                                    onClick={() => {
+                                    onClick={async () => {
+                                        await deleteProductImage(banner);
                                         setRemovedBanner(banner);
                                         form.setValue('banner', '');
                                     }}

@@ -267,3 +267,11 @@ npm install @radix-ui/react-separator
 npm install sharp
 npm install clsx tailwind-merge
 npm install query-string
+npm install bcrypt
+npm install --save-dev @types/bcrypt
+npm install uuid
+
+npx prisma migrate dev --name add-phone-number-to-user
+npm install libphonenumber-js
+npm install @prisma/client
+npm install xlsx @types/xlsx
