@@ -7,6 +7,8 @@ import { Toaster } from "@/components/ui/toaster";
 import Footer from "@/components/shared/footer";
 import { LoadingProvider } from "@/lib/context/loading-context";
 import { Suspense } from "react";
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -52,6 +54,8 @@ export default function RootLayout({
             </LoadingProvider>
           </Suspense>
         </ThemeProvider>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
