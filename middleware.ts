@@ -1,51 +1,63 @@
 // middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { auth } from '@/auth';
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  // ✅ Fetch session using next-auth
-  const session = await auth();
-
-  // ✅ Allow static files and public pages
+  // Skip middleware for static files and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/favicon.ico') ||
     pathname === '/sign-in' ||
-    pathname === '/unauthorized'
+    pathname === '/unauthorized' ||
+    pathname.startsWith('/api/') ||
+    pathname === '/' ||
+    pathname.startsWith('/product/') ||
+    pathname.startsWith('/category/') ||
+    pathname.startsWith('/search') ||
+    pathname === '/cart' ||
+    pathname.startsWith('/shipping-address') ||
+    pathname.startsWith('/payment-method') ||
+    pathname.startsWith('/place-order')
   ) {
     return NextResponse.next();
   }
 
-  // ✅ Define protected paths
+  // Check for protected paths
   const protectedPaths = [
     /^\/admin/,
     /^\/profile/,
-    /^\/shipping-address/,
-    /^\/payment-method/,
-    /^\/place-order/,
     /^\/order/,
     /^\/user/,
   ];
 
   const isProtected = protectedPaths.some((regex) => regex.test(pathname));
 
-  // 🔐 Redirect to /sign-in if trying to access protected routes without a session
-  if (!session && isProtected) {
-    return NextResponse.redirect(new URL('/sign-in', req.url));
-  }
+  // Check for session token - try multiple cookie names that NextAuth might use
+  const sessionToken = req.cookies.get('next-auth.session-token')?.value || 
+                      req.cookies.get('__Secure-next-auth.session-token')?.value ||
+                      req.cookies.get('authjs.session-token')?.value ||
+                      req.cookies.get('__Secure-authjs.session-token')?.value ||
+                      req.cookies.get('next-auth.csrf-token')?.value;
 
-  // 🚫 Block non-admin users from /admin
-  if (pathname.startsWith('/admin') && session?.user?.role !== 'admin') {
-    return NextResponse.redirect(new URL('/unauthorized', req.url));
+  // For debugging - log the request details
+  console.log('Middleware Debug:', {
+    pathname,
+    isProtected,
+    hasSessionToken: !!sessionToken,
+    sessionToken: sessionToken ? 'exists' : 'missing'
+  });
+
+  // Redirect to sign-in if accessing protected routes without session
+  if (!sessionToken && isProtected) {
+    console.log('Middleware: Redirecting to sign-in from', pathname);
+    return NextResponse.redirect(new URL('/sign-in', req.url));
   }
 
   return NextResponse.next();
 }
 
-// ✅ Optional matcher to optimize performance
 export const config = {
   matcher: [
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
