@@ -33,6 +33,8 @@
     "@stripe/stripe-js": "^7.3.1",
     "@types/xlsx": "^0.0.35",
     "@uploadthing/react": "^7.3.1",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "bcrypt": "^6.0.0",
     "bcrypt-ts-edge": "^3.0.1",
     "class-variance-authority": "^0.7.1",

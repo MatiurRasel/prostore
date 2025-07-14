@@ -5,12 +5,14 @@ import Link from "next/link";
 import MainNav from "./main-nav";
 import AdminSearch from "@/components/admin/admin-search";
 import Footer from "@/components/shared/footer";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function AdminLayout({
     children,
-  }: Readonly<{
+}: Readonly<{
     children: React.ReactNode;
-  }>) {
+}>) {
     return (
         <div className="flex flex-col min-h-screen">
             <header className="w-full border-b fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -25,17 +27,17 @@ export default function AdminLayout({
                                     height={32}
                                     className="transition-transform group-hover:scale-105"
                                 />
-                               
+
                             </Link>
                             <MainNav className="hidden md:flex items-center gap-6" />
                         </div>
-                        
+
                         <div className="hidden md:block flex-1 max-w-xl mx-8">
-                            <AdminSearch/>
+                            <AdminSearch />
                         </div>
 
                         <div className="flex items-center gap-1">
-                            <Menu/>
+                            <Menu />
                         </div>
                     </div>
                 </div>
@@ -47,4 +49,3 @@ export default function AdminLayout({
         </div>
     );
 }
-  
