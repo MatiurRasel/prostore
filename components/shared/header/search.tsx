@@ -1,45 +1,31 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { getAllCategories } from "@/lib/actions/product.actions";
-import { SearchIcon } from "lucide-react";
+import { getAllCategories, getTopSearchQueries } from "@/lib/actions/product.actions";
+import SearchInput from "./search-input";
 
 const Search = async () => {
     const categories = await getAllCategories();
-    return ( 
-        <form action="/search" method="GET" className="w-full">
+    const topSearches = await getTopSearchQueries(5);
+
+    return (
+        <div className="w-full">
             <div className="flex w-full items-center space-x-2">
                 <Select name="category">
-                    <SelectTrigger className="w-[140px] h-9">
+                    <SelectTrigger className="w-[140px] h-9 rounded-lg border-muted-foreground/20 bg-background/50 hover:bg-background transition-colors">
                         <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl border-border/50 shadow-xl">
                         <SelectItem key="All" value="all">All Categories</SelectItem>
-                        {categories.map((x) => (
+                        {categories.map((x: { category: string }) => (
                             <SelectItem key={x.category} value={x.category}>
                                 {x.category}
                             </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
-                <div className="relative flex-1">
-                    <Input
-                        name="q"
-                        type="text"
-                        placeholder="Search products..."
-                        className="h-9 w-full pl-3 pr-9"
-                    />
-                    <Button 
-                        type="submit" 
-                        size="icon" 
-                        className="absolute right-0 top-0 h-9 w-9 rounded-l-none"
-                    >
-                        <SearchIcon className="h-4 w-4"/>
-                    </Button>
-                </div>
+                <SearchInput topSearches={topSearches} />
             </div>
-        </form>
-     );
+        </div>
+    );
 }
- 
-export default Search; 
+
+export default Search;

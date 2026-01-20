@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
 import { useChat } from '@ai-sdk/react';
@@ -15,11 +16,20 @@ import { ChatTypingIndicator } from '../chat/ChatTypingIndicator';
 export default function ChatWidget() {
     const { data: session } = useSession();
     const [isOpen, setIsOpen] = useState(false);
+    const [showTooltip, setShowTooltip] = useState(false);
     const [input, setInput] = useState('');
-    const { messages, status, sendMessage } = useChat();
+    const { messages, status, sendMessage } = useChat() as any;
 
     const isLoading = status === 'submitted' || status === 'streaming';
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Show tooltip after 5 seconds if not open
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (!isOpen) setShowTooltip(true);
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [isOpen]);
 
     const handleQuickAction = (label: string) => {
         sendMessage({
@@ -40,7 +50,10 @@ export default function ChatWidget() {
 
     useEffect(() => {
         if (scrollRef.current) {
-            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+            scrollRef.current.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
         }
     }, [messages, status]);
 
@@ -91,34 +104,60 @@ export default function ChatWidget() {
         if (session?.user) {
             return ["Track Order", "Recommended for me", "My Last Order"];
         }
-        return ["Browse Products", "Today's Deals", "Gift Ideas"];
+        return ["Browse Products", "Newest Arrivals", "Featured Deals"];
     };
 
     return (
         <>
-            <motion.div
-                initial={false}
-                animate={{ scale: isOpen ? 0.9 : 1 }}
-                className="fixed bottom-4 right-4 z-50"
-            >
-                <Button
-                    onClick={() => setIsOpen(!isOpen)}
-                    className="h-14 w-14 rounded-full shadow-2xl z-50 p-0 bg-gradient-to-br from-primary to-primary/80 hover:scale-110 transition-transform duration-300"
-                    size="icon"
+            <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3">
+                <AnimatePresence>
+                    {showTooltip && !isOpen && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-primary text-primary-foreground px-4 py-2 rounded-2xl rounded-br-none shadow-xl text-xs font-bold flex items-center gap-2 border border-primary-foreground/20"
+                        >
+                            <Sparkles size={12} className="text-yellow-300 animate-pulse" />
+                            How can I help you today?
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-4 w-4 hover:bg-transparent"
+                                onClick={(e) => { e.stopPropagation(); setShowTooltip(false); }}
+                            >
+                                <X size={10} />
+                            </Button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <motion.div
+                    initial={false}
+                    animate={{ scale: isOpen ? 0.9 : 1 }}
                 >
-                    <AnimatePresence mode="wait">
-                        {isOpen ? (
-                            <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-                                <X size={24} />
-                            </motion.div>
-                        ) : (
-                            <motion.div key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
-                                <MessageCircle size={24} />
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                </Button>
-            </motion.div>
+                    <Button
+                        onClick={() => {
+                            setIsOpen(!isOpen);
+                            if (!isOpen) setShowTooltip(false);
+                        }}
+                        className="h-14 w-14 rounded-full shadow-2xl p-0 bg-gradient-to-br from-primary to-primary/80 hover:scale-110 transition-transform duration-300"
+                        size="icon"
+                    >
+                        <AnimatePresence mode="wait">
+                            {isOpen ? (
+                                <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+                                    <X size={24} />
+                                </motion.div>
+                            ) : (
+                                <motion.div key="open" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
+                                    <MessageCircle size={24} />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </Button>
+                </motion.div>
+            </div>
 
             <AnimatePresence>
                 {isOpen && (
@@ -126,14 +165,19 @@ export default function ChatWidget() {
                         initial={{ opacity: 0, y: 100, scale: 0.9, x: 20 }}
                         animate={{ opacity: 1, y: 0, scale: 1, x: 0 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9, x: 20 }}
-                        className="fixed bottom-20 right-4 w-[350px] md:w-[400px] h-[550px] z-50 overflow-hidden"
+                        className="fixed bottom-0 right-0 sm:bottom-20 sm:right-4 w-full sm:w-[400px] h-full sm:h-[600px] sm:max-h-[80vh] z-50 overflow-hidden"
                     >
-                        <Card className="h-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-primary/10 flex flex-col bg-background/95 backdrop-blur-xl dark:bg-zinc-950/95">
+                        <Card className="h-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] border-primary/10 flex flex-col bg-background/95 backdrop-blur-xl dark:bg-zinc-950/95 rounded-none sm:rounded-3xl overflow-hidden">
                             <CardHeader className="p-4 border-b bg-gradient-to-r from-primary/10 via-transparent to-transparent">
-                                <CardTitle className="text-base flex items-center gap-2 font-bold tracking-tight">
-                                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                                    ProStore AI Assistant
-                                    <Sparkles size={14} className="text-primary animate-pulse" />
+                                <CardTitle className="text-base flex items-center justify-between font-bold tracking-tight">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                                        ProStore AI Assistant
+                                        <Sparkles size={14} className="text-primary animate-pulse" />
+                                    </div>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => setIsOpen(false)}>
+                                        <X size={16} />
+                                    </Button>
                                 </CardTitle>
                             </CardHeader>
 
@@ -160,7 +204,7 @@ export default function ChatWidget() {
                                         </div>
                                     )}
 
-                                    {messages.map((m) => (
+                                    {messages.map((m: any) => (
                                         <motion.div
                                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -172,7 +216,7 @@ export default function ChatWidget() {
                                                 : 'bg-secondary/50 backdrop-blur-sm border border-border/50 text-secondary-foreground rounded-tl-none'
                                                 }`}>
                                                 {m.parts ? (
-                                                    m.parts.map((part, i) => (
+                                                    (m.parts as any[]).map((part: any, i: number) => (
                                                         part.type === 'text' ? (
                                                             <div key={i}>{renderMessageContent(part.text)}</div>
                                                         ) : null
@@ -192,7 +236,7 @@ export default function ChatWidget() {
                                 </div>
                             </CardContent>
 
-                            <CardFooter className="p-4 pt-1 bg-background/50 backdrop-blur-sm">
+                            <CardFooter className="p-4 pt-1 bg-background/50 backdrop-blur-sm pb-safe-bottom">
                                 <form onSubmit={handleSubmit} className="relative flex w-full items-center gap-2 group">
                                     <Input
                                         value={input}

@@ -1,6 +1,11 @@
 const https = require('https');
+const fs = require('fs');
 
-const apiKey = 'AIzaSyA6qJoHY_YtG0F-KsfCIzfqbxvtd6MYGJU';
+const apiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
+if (!apiKey) {
+    console.error('Error: GOOGLE_GENERATIVE_AI_API_KEY environment variable is not set');
+    process.exit(1);
+}
 const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
 
 https.get(url, (res) => {

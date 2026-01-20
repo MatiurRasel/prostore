@@ -153,3 +153,10 @@ model Review {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model SearchQuery {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  query     String   @unique
+  count     Int      @default(1)
+  updatedAt DateTime @updatedAt
+}

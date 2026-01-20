@@ -13,7 +13,7 @@
     "email": "copy .env .\\node_modules\\react-email && email dev --dir email --port 3005"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.10",
+    "@ai-sdk/openai": "^3.0.12",
     "@ai-sdk/react": "^3.0.44",
     "@auth/prisma-adapter": "^2.7.4",
     "@hookform/resolvers": "^4.1.3",

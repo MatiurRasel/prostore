@@ -9,7 +9,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { MotionDiv } from "@/components/ui/motion";
 import { Edit, Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 
-const AdminProductPage = async(props: {
+const AdminProductPage = async (props: {
     searchParams: Promise<{
         page: string;
         query: string;
@@ -28,10 +28,9 @@ const AdminProductPage = async(props: {
         query: searchText,
         page,
         sort,
-        order,
     });
 
-    function SortArrow({active, direction}: {active: boolean, direction: 'asc' | 'desc'}) {
+    function SortArrow({ active, direction }: { active: boolean, direction: 'asc' | 'desc' }) {
         if (!active) return <span className="inline-block w-4" />;
         return direction === 'asc' ? <ArrowUp className="inline-block w-4 h-4 ml-1" /> : <ArrowDown className="inline-block w-4 h-4 ml-1" />;
     }
@@ -42,7 +41,7 @@ const AdminProductPage = async(props: {
         return `/admin/products?page=${page}&query=${encodeURIComponent(searchText)}&sort=${col}&order=${nextOrder}`;
     }
 
-    return ( 
+    return (
         <div className="space-y-4 px-2 sm:px-4 md:px-6 lg:px-8">
             <div className="flex-between flex-col sm:flex-row gap-4">
                 <div className="flex items-center gap-3 flex-wrap">
@@ -58,7 +57,7 @@ const AdminProductPage = async(props: {
                         </div>
                     )}
                 </div>
-                
+
                 <Button asChild variant='default' className="gap-1">
                     <Link href='/admin/products/create'>
                         <Plus className="w-4 h-4" /> Create Product
@@ -75,32 +74,32 @@ const AdminProductPage = async(props: {
                                 <TableRow>
                                     <TableHead className="min-w-[100px] cursor-pointer">
                                         <Link href={buildSortLink('id')}>
-                                            ID <SortArrow active={sort==='id'} direction={order} />
+                                            ID <SortArrow active={sort === 'id'} direction={order} />
                                         </Link>
                                     </TableHead>
                                     <TableHead className="min-w-[200px] cursor-pointer">
                                         <Link href={buildSortLink('name')}>
-                                            NAME <SortArrow active={sort==='name'} direction={order} />
+                                            NAME <SortArrow active={sort === 'name'} direction={order} />
                                         </Link>
                                     </TableHead>
                                     <TableHead className="min-w-[120px] text-right cursor-pointer">
                                         <Link href={buildSortLink('price')}>
-                                            PRICE <SortArrow active={sort==='price'} direction={order} />
+                                            PRICE <SortArrow active={sort === 'price'} direction={order} />
                                         </Link>
                                     </TableHead>
                                     <TableHead className="min-w-[120px] cursor-pointer">
                                         <Link href={buildSortLink('category')}>
-                                            CATEGORY <SortArrow active={sort==='category'} direction={order} />
+                                            CATEGORY <SortArrow active={sort === 'category'} direction={order} />
                                         </Link>
                                     </TableHead>
                                     <TableHead className="min-w-[100px] cursor-pointer">
                                         <Link href={buildSortLink('stock')}>
-                                            STOCK <SortArrow active={sort==='stock'} direction={order} />
+                                            STOCK <SortArrow active={sort === 'stock'} direction={order} />
                                         </Link>
                                     </TableHead>
                                     <TableHead className="min-w-[100px] cursor-pointer">
                                         <Link href={buildSortLink('rating')}>
-                                            RATING <SortArrow active={sort==='rating'} direction={order} />
+                                            RATING <SortArrow active={sort === 'rating'} direction={order} />
                                         </Link>
                                     </TableHead>
                                     <TableHead className="min-w-[150px] text-right">ACTIONS</TableHead>
@@ -198,5 +197,5 @@ const AdminProductPage = async(props: {
         </div>
     );
 }
- 
+
 export default AdminProductPage;

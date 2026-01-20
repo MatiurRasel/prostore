@@ -278,14 +278,11 @@ npm install xlsx @types/xlsx
 
 
 https://aistudio.google.com/app/api-keys
-AIzaSyA6qJoHY_YtG0F-KsfCIzfqbxvtd6MYGJU
-
-echo GOOGLE_GENERATIVE_AI_API_KEY="AIzaSyA6qJoHY_YtG0F-KsfCIzfqbxvtd6MYGJU" >> .env
-AIzaSyA6qJoHY_YtG0F-KsfCIzfqbxvtd6MYGJU
+[REDACTED_API_KEY]
+echo GOOGLE_GENERATIVE_AI_API_KEY="[REDACTED_API_KEY]" >> .env
+[REDACTED_API_KEY]
  npx prisma migrate dev --name add_vector_search
   npm install ai @ai-sdk/google
   npm install @ai-sdk/react
   npx tsc --noEmit
-  mkdir components/chat
-
-  
+  npx prisma migrate dev --name add_search_query_tracking
