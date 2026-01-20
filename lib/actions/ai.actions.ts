@@ -13,7 +13,7 @@ export async function generateProductDescription(prompt: string) {
             prompt: prompt,
         });
         return { success: true, text };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, error: 'Failed to generate description' };
     }
 }

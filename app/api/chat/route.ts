@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
     // Extract text from the last message depending on its format (string or parts)
     const lastMessageContent = Array.isArray(lastMessage.parts)
-        ? lastMessage.parts.map((p: any) => p.text).join('')
+        ? lastMessage.parts.map((p: { text: string }) => p.text).join('')
         : lastMessage.content;
 
     // RAG & Role-based Context
@@ -100,11 +100,11 @@ export async function POST(req: Request) {
         User Name: ${userName}
         ${context}`,
         // Forward messages, ensuring they match CoreMessage structure
-        messages: messages.map((m: any) => {
+        messages: messages.map((m: { role: "user" | "assistant" | "system"; content?: string; parts?: { type: string; text?: string }[] }) => {
             if (m.parts && Array.isArray(m.parts)) {
                 return {
                     role: m.role,
-                    content: m.parts.map((p: any) => ({ type: 'text', text: p.text || '' }))
+                    content: m.parts.map((p) => ({ type: 'text', text: p.text || '' }))
                 };
             }
             return {

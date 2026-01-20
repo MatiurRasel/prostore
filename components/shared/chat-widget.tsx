@@ -55,7 +55,7 @@ export default function ChatWidget() {
 
         // Parse Products: [Product: Name | Price | Slug | ImageURL]
         const productRegex = /\[Product:\s*([^|\]]+)\|\s*([^|\]]+)\|\s*([^|\]]+)\|\s*([^|\]]*)\]/g;
-        const products: any[] = [];
+        const products: { name: string; price: string; slug: string; image: string }[] = [];
         cleanText = cleanText.replace(productRegex, (_, name, price, slug, image) => {
             products.push({ name: name.trim(), price: price.trim(), slug: slug.trim(), image: image.trim() });
             return "";
@@ -149,7 +149,7 @@ export default function ChatWidget() {
                                                     {session?.user ? `Welcome back, ${session.user.name?.split(' ')[0]} 👋` : "👋 Looking for something?"}
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground">
-                                                    I'm here to help you find the best deals or assist with your orders.
+                                                    I&apos;m here to help you find the best deals or assist with your orders.
                                                 </p>
                                             </div>
                                             <div className="flex flex-wrap justify-center gap-2">
@@ -168,8 +168,8 @@ export default function ChatWidget() {
                                             className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                                         >
                                             <div className={`max-w-[85%] rounded-2xl px-4 py-2.5 shadow-sm ${m.role === 'user'
-                                                    ? 'bg-primary text-primary-foreground rounded-tr-none'
-                                                    : 'bg-secondary/50 backdrop-blur-sm border border-border/50 text-secondary-foreground rounded-tl-none'
+                                                ? 'bg-primary text-primary-foreground rounded-tr-none'
+                                                : 'bg-secondary/50 backdrop-blur-sm border border-border/50 text-secondary-foreground rounded-tl-none'
                                                 }`}>
                                                 {m.parts ? (
                                                     m.parts.map((part, i) => (
@@ -178,7 +178,7 @@ export default function ChatWidget() {
                                                         ) : null
                                                     ))
                                                 ) : (
-                                                    <div>{renderMessageContent((m as any).content || "")}</div>
+                                                    <div>{renderMessageContent((m as { content?: string }).content || "")}</div>
                                                 )}
                                             </div>
                                         </motion.div>
