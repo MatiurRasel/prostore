@@ -1,36 +1,46 @@
 'use server';
-import {prisma} from '@/db/prisma';
+import { prisma } from '@/db/prisma';
 import { convertToPlainObject, formatError } from "../utils";
-import {LATEST_PRODUCTS_LIMIT, PAGE_SIZE} from "../constants";
+import { LATEST_PRODUCTS_LIMIT, PAGE_SIZE } from "../constants";
 import { revalidatePath } from 'next/cache';
-import {  insertProductSchema, updateProductSchema } from '../validators';
+import { insertProductSchema, updateProductSchema } from '../validators';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 import { utapi } from '../uploadthing-server';
+import { generateEmbedding } from '@/lib/ai';
 
-//GET latest products
+
+//GET latest products which is stocked
 export async function getLatestProducts() {
-
     const data = await prisma.product.findMany({
+        where: { stock: { gt: 0 } },
         take: LATEST_PRODUCTS_LIMIT,
-        orderBy: {createdAt:'desc'}
+        orderBy: { createdAt: 'desc' }
     });
-
     return convertToPlainObject(data);
-    
 }
+//export async function getLatestProducts() {
+//
+//    const data = await prisma.product.findMany({
+//        take: LATEST_PRODUCTS_LIMIT,
+//        orderBy: {createdAt:'desc'}
+//    });
+//
+//    return convertToPlainObject(data);
+//    
+//}
 
 //Get single product by it's slug.
 export async function getProductBySlug(slug: string) {
     return await prisma.product.findFirst({
-        where: {slug: slug},
+        where: { slug: slug },
     });
 }
 
 //Get single product by it's id.
 export async function getProductById(productId: string) {
     const data = await prisma.product.findFirst({
-        where: {id: productId},
+        where: { id: productId },
     });
 
     return convertToPlainObject(data);
@@ -38,7 +48,7 @@ export async function getProductById(productId: string) {
 
 //Get all products
 export async function getAllProducts({
-    query, 
+    query,
     limit = PAGE_SIZE,
     page,
     category,
@@ -58,15 +68,34 @@ export async function getAllProducts({
 }) {
 
     //query filter
+    // Hybrid Search logic
+    let vectorProductIds: string[] = [];
+    if (query && query !== 'all') {
+        try {
+            const embedding = await generateEmbedding(query);
+            if (embedding) {
+                const products = await prisma.$queryRaw<{ id: string }[]>`
+                    SELECT id FROM "Product" 
+                    ORDER BY "descriptionEmbedding" <=> ${embedding}::vector 
+                    LIMIT 20
+                `;
+                vectorProductIds = products.map(p => p.id);
+            }
+        } catch (error) {
+            console.error("Vector search error:", error);
+        }
+    }
+
+    // query filter (Hybrid: Keyword OR Semantic)
     const queryFilter: Prisma.ProductWhereInput = query && query !== 'all' ? {
-        name: {
-            contains: query,
-            mode: 'insensitive'
-        } as Prisma.StringFilter
+        OR: [
+            { name: { contains: query, mode: 'insensitive' } },
+            ...(vectorProductIds.length > 0 ? [{ id: { in: vectorProductIds } }] : [])
+        ]
     } : {};
 
     //category filter
-    const categoryFilter = category && category !== 'all' ? {category} : {};
+    const categoryFilter = category && category !== 'all' ? { category } : {};
 
     //price filter
     const priceFilter: Prisma.ProductWhereInput = price && price !== 'all' ? {
@@ -74,15 +103,15 @@ export async function getAllProducts({
             gte: Number(price.split('-')[0]),
             lte: Number(price.split('-')[1])
         }
-    }:{};
+    } : {};
 
     //rating filter
     const ratingFilter = rating && rating !== 'all' ? {
         rating: {
             gte: Number(rating)
         }
-    }:{};
-    
+    } : {};
+
     // Map sort keys to Prisma orderBy fields
     let orderBy: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };
     if (sort === 'id') orderBy = { id: order };
@@ -108,10 +137,10 @@ export async function getAllProducts({
     //const dataCount = await prisma.product.count();
 
     const dataCount = await prisma.product.count();
-    
+
     return {
         data,
-        totalPages: Math.ceil(dataCount/ limit),
+        totalPages: Math.ceil(dataCount / limit),
     }
 }
 
@@ -119,19 +148,19 @@ export async function getAllProducts({
 export async function deleteProduct(id: string) {
     try {
         const productExists = await prisma.product.findFirst({
-            where: {id}
+            where: { id }
         });
 
-        if(!productExists) throw new Error('Product not found');
+        if (!productExists) throw new Error('Product not found');
 
         await prisma.product.delete({
-            where: {id}
+            where: { id }
         });
 
         revalidatePath('/admin/products');
 
         return {
-            success: true, 
+            success: true,
             message: 'Product delete successfully',
         }
 
@@ -141,13 +170,13 @@ export async function deleteProduct(id: string) {
             message: formatError(error)
         }
     }
-    
+
 }
 
 function extractFileKey(url: string): string | null {
-  // For Uploadthing, the file key is after /f/
-  const match = url.match(/\/f\/([^/?#]+)/);
-  return match ? match[1] : null;
+    // For Uploadthing, the file key is after /f/
+    const match = url.match(/\/f\/([^/?#]+)/);
+    return match ? match[1] : null;
 }
 
 //Create a Product
@@ -163,15 +192,23 @@ export async function createProduct(data: z.infer<typeof insertProductSchema> & 
             if (key) await utapi.deleteFiles(key);
         }
         const product = insertProductSchema.parse(data);
-        await prisma.product.create({data: product});
+        const newProduct = await prisma.product.create({ data: product });
+
+        // Generate and save embedding
+        const embeddingText = `${newProduct.name} ${newProduct.description} ${newProduct.category} ${newProduct.brand}`;
+        const embedding = await generateEmbedding(embeddingText);
+        if (embedding) {
+            await prisma.$executeRaw`UPDATE "Product" SET "descriptionEmbedding" = ${embedding}::vector WHERE id = ${newProduct.id}::uuid`;
+        }
+
         revalidatePath('/admin/products');
-         return {
-            success: true, 
+        return {
+            success: true,
             message: 'Product created successfully',
         }
     } catch (error) {
         return {
-            success: false, 
+            success: false,
             message: formatError(error),
         }
     }
@@ -195,19 +232,26 @@ export async function updateProduct(data: z.infer<typeof updateProductSchema> & 
                 id: product.id
             }
         });
-        if(!productExists) throw new Error('Product not found.');
+        if (!productExists) throw new Error('Product not found.');
         await prisma.product.update({
-            where: {id: product.id},
+            where: { id: product.id },
             data: product
         });
+
+        // Update embedding
+        const embeddingText = `${product.name} ${product.description} ${product.category} ${product.brand}`;
+        const embedding = await generateEmbedding(embeddingText);
+        if (embedding) {
+            await prisma.$executeRaw`UPDATE "Product" SET "descriptionEmbedding" = ${embedding}::vector WHERE id = ${product.id}::uuid`;
+        }
         revalidatePath('/admin/products');
-         return {
-            success: true, 
+        return {
+            success: true,
             message: 'Product updated successfully',
         }
     } catch (error) {
         return {
-            success: false, 
+            success: false,
             message: formatError(error),
         }
     }
@@ -215,13 +259,13 @@ export async function updateProduct(data: z.infer<typeof updateProductSchema> & 
 
 //Get all categories
 export async function getAllCategories() {
-   
+
     const data = await prisma.product.groupBy({
         by: ['category'],
         _count: true,
     });
     return data;
-   
+
 }
 
 //Get featured products
@@ -232,23 +276,23 @@ export async function getFeaturedProducts() {
             banner: {
                 not: null,
                 notIn: [''], // ignore empty string too
-              },
-        
+            },
+
         },
-        orderBy: {createdAt: 'desc'},
+        orderBy: { createdAt: 'desc' },
         take: 4,
     });
     return convertToPlainObject(data);
 }
 
 export async function deleteProductImage(imageUrl: string) {
-  try {
-    const key = extractFileKey(imageUrl);
-    if (key) await utapi.deleteFiles(key);
-    return { success: true };
-  } catch (error) {
-    return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
-  }
+    try {
+        const key = extractFileKey(imageUrl);
+        if (key) await utapi.deleteFiles(key);
+        return { success: true };
+    } catch (error) {
+        return { success: false, message: error instanceof Error ? error.message : 'Unknown error' };
+    }
 }
 
 

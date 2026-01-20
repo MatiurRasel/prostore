@@ -9,6 +9,8 @@ import { LoadingProvider } from "@/lib/context/loading-context";
 import { Suspense } from "react";
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/next';
+import ChatWidget from "@/components/shared/chat-widget";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,17 +44,20 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Suspense>
-            <LoadingProvider>
-              <div className="flex flex-col min-h-screen w-full max-w-[100vw] overflow-x-hidden">
-                <main className="flex-1 pt-14 pb-32 px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl">
-                  {children}
-                </main>
-                <Footer />
-              </div>
-              <Toaster />
-            </LoadingProvider>
-          </Suspense>
+          <SessionProvider>
+            <Suspense>
+              <LoadingProvider>
+                <div className="flex flex-col min-h-screen w-full max-w-[100vw] overflow-x-hidden">
+                  <main className="flex-1 pt-14 pb-32 px-4 sm:px-6 lg:px-8 mx-auto w-full max-w-7xl">
+                    {children}
+                  </main>
+                  <Footer />
+                </div>
+                <Toaster />
+                <ChatWidget />
+              </LoadingProvider>
+            </Suspense>
+          </SessionProvider>
         </ThemeProvider>
         <SpeedInsights />
         <Analytics />

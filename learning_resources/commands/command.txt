@@ -275,3 +275,17 @@ npx prisma migrate dev --name add-phone-number-to-user
 npm install libphonenumber-js
 npm install @prisma/client
 npm install xlsx @types/xlsx
+
+
+https://aistudio.google.com/app/api-keys
+AIzaSyA6qJoHY_YtG0F-KsfCIzfqbxvtd6MYGJU
+
+echo GOOGLE_GENERATIVE_AI_API_KEY="AIzaSyA6qJoHY_YtG0F-KsfCIzfqbxvtd6MYGJU" >> .env
+AIzaSyA6qJoHY_YtG0F-KsfCIzfqbxvtd6MYGJU
+ npx prisma migrate dev --name add_vector_search
+  npm install ai @ai-sdk/google
+  npm install @ai-sdk/react
+  npx tsc --noEmit
+  mkdir components/chat
+
+  
